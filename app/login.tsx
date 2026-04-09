@@ -13,6 +13,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Alert } from 'react-native';
 import { useAuth } from '@/context/auth';
 
 export default function LoginScreen() {
@@ -112,7 +113,8 @@ export default function LoginScreen() {
                 </View>
               )}
 
-              <Pressable style={styles.forgotPassword}>
+              <Pressable style={styles.forgotPassword} onPress={() => Alert.alert('Recuperar senha', 'Insere o teu email e enviaremos um link de recuperação.\n\n(Funcionalidade disponível após integração com o backend)')}
+              >
                 <Text style={styles.forgotPasswordText}>Esqueceu a senha?</Text>
               </Pressable>
 
@@ -152,7 +154,7 @@ export default function LoginScreen() {
             {/* Rodapé */}
             <View style={styles.footer}>
               <Text style={styles.footerText}>Não tem conta? </Text>
-              <Pressable>
+              <Pressable onPress={() => Alert.alert('Cadastro', 'O cadastro é feito através do site.\nApós criar a conta, usa o mesmo email e senha aqui no app.')}>
                 <Text style={styles.footerLink}>Cadastre-se</Text>
               </Pressable>
             </View>

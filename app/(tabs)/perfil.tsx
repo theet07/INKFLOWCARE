@@ -1,32 +1,67 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useState } from 'react';
+import {
+  Alert, Modal, Pressable, ScrollView, StyleSheet,
+  Switch, Text, TextInput, TouchableOpacity, View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/context/auth';
 
-const usuario = {
-  nome: 'João Silva',
-  email: 'joao@email.com',
-  tatuagens: 3,
-  emCuidado: 1,
-  concluidas: 2,
-};
-
-const historico = [
+const historicoInicial = [
   { id: 1, nome: 'Dragão nas costas', artista: 'Carlos Ink', data: '10/07/2025', status: 'em_cuidado' },
   { id: 2, nome: 'Rosa no braço', artista: 'Ana Tattoo', data: '15/03/2025', status: 'concluida' },
   { id: 3, nome: 'Mandala na perna', artista: 'Pedro Art', data: '02/11/2024', status: 'concluida' },
 ];
 
-const opcoes = [
-  { icone: 'notifications-outline', titulo: 'Notificações', sub: 'Lembretes de cuidados' },
-  { icone: 'moon-outline', titulo: 'Tema escuro', sub: 'Ativado' },
-  { icone: 'shield-outline', titulo: 'Privacidade', sub: 'Gerenciar dados' },
-  { icone: 'help-circle-outline', titulo: 'Ajuda', sub: 'FAQ e suporte' },
-];
-
 export default function PerfilScreen() {
   const { logout } = useAuth();
+  const [nome, setNome] = useState('João Silva');
+  const [email, setEmail] = useState('joao@email.com');
+  const [nomeEdit, setNomeEdit] = useState('');
+  const [emailEdit, setEmailEdit] = useState('');
+  const [modalVisivel, setModalVisivel] = useState(false);
+  const [notificacoes, setNotificacoes] = useState(true);
+  const [temaEscuro, setTemaEscuro] = useState(true);
+  const [historico] = useState(historicoInicial);
+
+  function abrirEditar() {
+    setNomeEdit(nome);
+    setEmailEdit(email);
+    setModalVisivel(true);
+  }
+
+  function salvarPerfil() {
+    if (!nomeEdit.trim()) { Alert.alert('Atenção', 'O nome não pode estar vazio.'); return; }
+    if (!/\S+@\S+\.\S+/.test(emailEdit)) { Alert.alert('Atenção', 'Email inválido.'); return; }
+    setNome(nomeEdit.trim());
+    setEmail(emailEdit.trim());
+    setModalVisivel(false);
+    Alert.alert('Perfil atualizado!', 'As tuas informações foram salvas.');
+  }
+
+  function handlePrivacidade() {
+    Alert.alert('Privacidade', 'Os teus dados são armazenados localmente no dispositivo e nunca partilhados com terceiros.', [{ text: 'OK' }]);
+  }
+
+  function handleAjuda() {
+    Alert.alert(
+      'Ajuda & Suporte',
+      'Para suporte, entra em contacto:\n\n📧 suporte@inkflowcare.com\n\nVersão do app: 1.0.0',
+      [{ text: 'OK' }]
+    );
+  }
+
+  function handleLogout() {
+    Alert.alert('Sair da conta', 'Tens a certeza que queres sair?', [
+      { text: 'Cancelar', style: 'cancel' },
+      { text: 'Sair', style: 'destructive', onPress: logout },
+    ]);
+  }
+
+  const emCuidado = historico.filter((t) => t.status === 'em_cuidado').length;
+  const concluidas = historico.filter((t) => t.status === 'concluida').length;
+
   return (
     <LinearGradient colors={['#000000', '#0a0a2e', '#0d1b4b']} style={styles.gradient}>
       <SafeAreaView style={styles.safe}>
@@ -35,11 +70,11 @@ export default function PerfilScreen() {
           {/* Avatar e nome */}
           <View style={styles.avatarSection}>
             <View style={styles.avatar}>
-              <Text style={styles.avatarLetra}>{usuario.nome[0]}</Text>
+              <Text style={styles.avatarLetra}>{nome[0]}</Text>
             </View>
-            <Text style={styles.nome}>{usuario.nome}</Text>
-            <Text style={styles.email}>{usuario.email}</Text>
-            <TouchableOpacity style={styles.editBtn}>
+            <Text style={styles.nome}>{nome}</Text>
+            <Text style={styles.email}>{email}</Text>
+            <TouchableOpacity style={styles.editBtn} onPress={abrirEditar} activeOpacity={0.7}>
               <Ionicons name="pencil-outline" size={14} color="#FF0000" />
               <Text style={styles.editBtnText}>Editar perfil</Text>
             </TouchableOpacity>
@@ -48,17 +83,17 @@ export default function PerfilScreen() {
           {/* Stats */}
           <View style={styles.statsRow}>
             <View style={styles.statItem}>
-              <Text style={styles.statNum}>{usuario.tatuagens}</Text>
+              <Text style={styles.statNum}>{historico.length}</Text>
               <Text style={styles.statLabel}>Tatuagens</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
-              <Text style={[styles.statNum, { color: '#FF0000' }]}>{usuario.emCuidado}</Text>
+              <Text style={[styles.statNum, { color: '#FF0000' }]}>{emCuidado}</Text>
               <Text style={styles.statLabel}>Em cuidado</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
-              <Text style={[styles.statNum, { color: '#00AA44' }]}>{usuario.concluidas}</Text>
+              <Text style={[styles.statNum, { color: '#00AA44' }]}>{concluidas}</Text>
               <Text style={styles.statLabel}>Concluídas</Text>
             </View>
           </View>
@@ -74,14 +109,8 @@ export default function PerfilScreen() {
                 <Text style={styles.tatuagemNome}>{t.nome}</Text>
                 <Text style={styles.tatuagemSub}>{t.artista} · {t.data}</Text>
               </View>
-              <View style={[
-                styles.statusBadge,
-                t.status === 'em_cuidado' ? styles.statusAtivo : styles.statusConcluido,
-              ]}>
-                <Text style={[
-                  styles.statusText,
-                  t.status === 'em_cuidado' ? styles.statusAtivoText : styles.statusConcluidoText,
-                ]}>
+              <View style={[styles.statusBadge, t.status === 'em_cuidado' ? styles.statusAtivo : styles.statusConcluido]}>
+                <Text style={[styles.statusText, t.status === 'em_cuidado' ? styles.statusAtivoText : styles.statusConcluidoText]}>
                   {t.status === 'em_cuidado' ? 'Ativo' : 'Concluído'}
                 </Text>
               </View>
@@ -91,30 +120,128 @@ export default function PerfilScreen() {
           {/* Configurações */}
           <Text style={styles.sectionTitle}>Configurações</Text>
           <View style={styles.opcoesContainer}>
-            {opcoes.map((o, i) => (
-              <TouchableOpacity key={i} style={[styles.opcaoItem, i < opcoes.length - 1 && styles.opcaoBorder]} activeOpacity={0.7}>
-                <View style={styles.opcaoLeft}>
-                  <View style={styles.opcaoIcone}>
-                    <Ionicons name={o.icone as any} size={18} color="#FF0000" />
-                  </View>
-                  <View>
-                    <Text style={styles.opcaoTitulo}>{o.titulo}</Text>
-                    <Text style={styles.opcaoSub}>{o.sub}</Text>
-                  </View>
+
+            {/* Notificações com toggle */}
+            <View style={[styles.opcaoItem, styles.opcaoBorder]}>
+              <View style={styles.opcaoLeft}>
+                <View style={styles.opcaoIcone}>
+                  <Ionicons name="notifications-outline" size={18} color="#FF0000" />
                 </View>
-                <Ionicons name="chevron-forward" size={16} color="#555" />
-              </TouchableOpacity>
-            ))}
+                <View>
+                  <Text style={styles.opcaoTitulo}>Notificações</Text>
+                  <Text style={styles.opcaoSub}>{notificacoes ? 'Ativadas' : 'Desativadas'}</Text>
+                </View>
+              </View>
+              <Switch
+                value={notificacoes}
+                onValueChange={setNotificacoes}
+                trackColor={{ false: '#333', true: 'rgba(255,0,0,0.4)' }}
+                thumbColor={notificacoes ? '#FF0000' : '#666'}
+              />
+            </View>
+
+            {/* Tema escuro com toggle */}
+            <View style={[styles.opcaoItem, styles.opcaoBorder]}>
+              <View style={styles.opcaoLeft}>
+                <View style={styles.opcaoIcone}>
+                  <Ionicons name="moon-outline" size={18} color="#FF0000" />
+                </View>
+                <View>
+                  <Text style={styles.opcaoTitulo}>Tema escuro</Text>
+                  <Text style={styles.opcaoSub}>{temaEscuro ? 'Ativado' : 'Desativado'}</Text>
+                </View>
+              </View>
+              <Switch
+                value={temaEscuro}
+                onValueChange={setTemaEscuro}
+                trackColor={{ false: '#333', true: 'rgba(255,0,0,0.4)' }}
+                thumbColor={temaEscuro ? '#FF0000' : '#666'}
+              />
+            </View>
+
+            {/* Privacidade */}
+            <TouchableOpacity style={[styles.opcaoItem, styles.opcaoBorder]} onPress={handlePrivacidade} activeOpacity={0.7}>
+              <View style={styles.opcaoLeft}>
+                <View style={styles.opcaoIcone}>
+                  <Ionicons name="shield-outline" size={18} color="#FF0000" />
+                </View>
+                <View>
+                  <Text style={styles.opcaoTitulo}>Privacidade</Text>
+                  <Text style={styles.opcaoSub}>Gerenciar dados</Text>
+                </View>
+              </View>
+              <Ionicons name="chevron-forward" size={16} color="#555" />
+            </TouchableOpacity>
+
+            {/* Ajuda */}
+            <TouchableOpacity style={styles.opcaoItem} onPress={handleAjuda} activeOpacity={0.7}>
+              <View style={styles.opcaoLeft}>
+                <View style={styles.opcaoIcone}>
+                  <Ionicons name="help-circle-outline" size={18} color="#FF0000" />
+                </View>
+                <View>
+                  <Text style={styles.opcaoTitulo}>Ajuda</Text>
+                  <Text style={styles.opcaoSub}>FAQ e suporte</Text>
+                </View>
+              </View>
+              <Ionicons name="chevron-forward" size={16} color="#555" />
+            </TouchableOpacity>
+
           </View>
 
           {/* Sair */}
-          <TouchableOpacity style={styles.sairBtn} onPress={logout}>
+          <TouchableOpacity style={styles.sairBtn} onPress={handleLogout} activeOpacity={0.7}>
             <Ionicons name="log-out-outline" size={18} color="#FF0000" />
             <Text style={styles.sairText}>Sair da conta</Text>
           </TouchableOpacity>
 
         </ScrollView>
       </SafeAreaView>
+
+      {/* Modal editar perfil */}
+      <Modal visible={modalVisivel} transparent animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitulo}>Editar perfil</Text>
+              <TouchableOpacity onPress={() => setModalVisivel(false)}>
+                <Ionicons name="close" size={22} color="#fff" />
+              </TouchableOpacity>
+            </View>
+
+            <Text style={styles.modalLabel}>Nome</Text>
+            <View style={styles.modalInput}>
+              <Ionicons name="person-outline" size={18} color="#888" style={{ marginRight: 10 }} />
+              <TextInput
+                style={styles.modalInputText}
+                value={nomeEdit}
+                onChangeText={setNomeEdit}
+                placeholderTextColor="#555"
+                placeholder="Teu nome"
+              />
+            </View>
+
+            <Text style={styles.modalLabel}>Email</Text>
+            <View style={styles.modalInput}>
+              <Ionicons name="mail-outline" size={18} color="#888" style={{ marginRight: 10 }} />
+              <TextInput
+                style={styles.modalInputText}
+                value={emailEdit}
+                onChangeText={setEmailEdit}
+                placeholderTextColor="#555"
+                placeholder="Teu email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </View>
+
+            <Pressable style={({ pressed }) => [styles.modalSalvarBtn, pressed && { opacity: 0.8 }]} onPress={salvarPerfil}>
+              <Text style={styles.modalSalvarText}>Salvar alterações</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
     </LinearGradient>
   );
 }
@@ -199,4 +326,27 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,0,0,0.05)',
   },
   sairText: { color: '#FF0000', fontSize: 15, fontWeight: '600' },
+
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'flex-end' },
+  modalContainer: {
+    backgroundColor: '#0d1b4b',
+    borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    padding: 24, paddingBottom: 40,
+    borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
+  },
+  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
+  modalTitulo: { fontSize: 18, fontWeight: '700', color: '#fff' },
+  modalLabel: { fontSize: 12, color: '#888', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 8 },
+  modalInput: {
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.07)',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)',
+    borderRadius: 12, paddingHorizontal: 14, height: 50, marginBottom: 16,
+  },
+  modalInputText: { flex: 1, color: '#fff', fontSize: 15 },
+  modalSalvarBtn: {
+    backgroundColor: '#FF0000', borderRadius: 12, height: 50,
+    justifyContent: 'center', alignItems: 'center', marginTop: 8,
+  },
+  modalSalvarText: { color: '#fff', fontSize: 16, fontWeight: '700' },
 });
