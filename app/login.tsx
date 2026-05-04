@@ -17,7 +17,7 @@ import { Alert } from 'react-native';
 import { useAuth } from '@/context/auth';
 
 export default function LoginScreen() {
-  const { login, loginDemo } = useAuth();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [showSenha, setShowSenha] = useState(false);
@@ -28,7 +28,6 @@ export default function LoginScreen() {
     if (!email.trim()) return 'Informe o email.';
     if (!/\S+@\S+\.\S+/.test(email)) return 'Email inválido.';
     if (!senha.trim()) return 'Informe a senha.';
-    if (senha.length < 6) return 'A senha deve ter pelo menos 6 caracteres.';
     return '';
   }
 
@@ -39,19 +38,12 @@ export default function LoginScreen() {
     setErro('');
     setLoading(true);
 
-    await new Promise((r) => setTimeout(r, 1200));
-
-    const ok = login(email, senha);
+    const result = await login(email, senha);
     setLoading(false);
-    if (!ok) setErro('Email ou senha incorretos.');
-  }
-
-  async function handleDemo() {
-    setErro('');
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
-    loginDemo();
+    
+    if (!result.success) {
+      setErro(result.message || 'Email ou senha incorretos.');
+    }
   }
 
   return (
@@ -137,18 +129,9 @@ export default function LoginScreen() {
               {/* Divisor */}
               <View style={styles.divider}>
                 <View style={styles.dividerLine} />
-                <Text style={styles.dividerText}>ou</Text>
+                <Text style={styles.dividerText}>Primeira vez?</Text>
                 <View style={styles.dividerLine} />
               </View>
-
-              {/* Botão Demo */}
-              <Pressable
-                style={({ pressed }) => [styles.demoButton, (pressed || loading) && styles.pressed]}
-                onPress={handleDemo}
-                disabled={loading}
-              >
-                <Text style={styles.demoButtonText}>Testar com Conta Demo</Text>
-              </Pressable>
             </View>
 
             {/* Rodapé */}

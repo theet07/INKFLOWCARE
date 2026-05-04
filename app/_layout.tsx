@@ -1,7 +1,7 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -12,21 +12,17 @@ export const unstable_settings = {
 };
 
 function Guard() {
-  const { logado } = useAuth();
+  const { logado, loading } = useAuth();
   const segments = useSegments();
   const router = useRouter();
-  const [pronto, setPronto] = useState(false);
 
   useEffect(() => {
-    setPronto(true);
-  }, []);
-
-  useEffect(() => {
-    if (!pronto) return;
+    if (loading) return; // Aguarda carregar do AsyncStorage
+    
     const emTabs = segments[0] === '(tabs)';
     if (!logado && emTabs) router.replace('/login');
-    if (logado && !emTabs) router.replace('/(tabs)');
-  }, [logado, segments, pronto]);
+    if (logado && !emTabs && segments[0] !== 'nova-tatuagem') router.replace('/(tabs)');
+  }, [logado, segments, loading]);
 
   return null;
 }

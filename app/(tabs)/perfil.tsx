@@ -52,10 +52,16 @@ export default function PerfilScreen() {
     );
   }
 
-  function handleLogout() {
+  async function handleLogout() {
     Alert.alert('Sair da conta', 'Tens a certeza que queres sair?', [
       { text: 'Cancelar', style: 'cancel' },
-      { text: 'Sair', style: 'destructive', onPress: logout },
+      { 
+        text: 'Sair', 
+        style: 'destructive', 
+        onPress: async () => {
+          await logout();
+        }
+      },
     ]);
   }
 
