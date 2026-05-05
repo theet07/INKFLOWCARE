@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,7 +8,7 @@ const fases = [
     id: 1,
     titulo: 'Fase 1 — Primeiras 24h',
     dias: 'Dia 1',
-    cor: '#FF0000',
+    cor: '#FF4757',
     icone: 'bandage-outline',
     descricao: 'A tatuagem está recém-feita. A pele está inflamada e sensível. Esta é a fase mais crítica.',
     rotina: {
@@ -43,7 +42,7 @@ const fases = [
     id: 2,
     titulo: 'Fase 2 — Cicatrização inicial',
     dias: 'Dias 2 a 7',
-    cor: '#FF6600',
+    cor: '#FF8C00',
     icone: 'water-outline',
     descricao: 'A pele começa a formar uma crosta fina. É normal sentir coceira e ver algum vermelhidão.',
     rotina: {
@@ -77,7 +76,7 @@ const fases = [
     id: 3,
     titulo: 'Fase 3 — Descamação',
     dias: 'Dias 7 a 14',
-    cor: '#FFAA00',
+    cor: '#FFD700',
     icone: 'leaf-outline',
     descricao: 'A pele começa a descamar. Isso é completamente normal e saudável. A tatuagem pode parecer opaca.',
     rotina: {
@@ -111,7 +110,7 @@ const fases = [
     id: 4,
     titulo: 'Fase 4 — Cicatrização profunda',
     dias: 'Dias 14 a 30',
-    cor: '#00AA44',
+    cor: '#22c55e',
     icone: 'shield-checkmark-outline',
     descricao: 'A camada superficial está curada. A pele profunda ainda se recupera e a tatuagem ganha brilho.',
     rotina: {
@@ -177,14 +176,18 @@ export default function CuidadosScreen() {
     Alert.alert('⚠️ Sinal de alerta', `${texto}\n\nSe notar este sintoma, procure um médico ou dermatologista imediatamente.`, [{ text: 'Entendido' }]);
   }
 
-  const faseAtiva = fases.find((f) => f.id === faseAberta);
-
   return (
-    <LinearGradient colors={['#000000', '#0a0a2e', '#0d1b4b']} style={styles.gradient}>
+    <View style={styles.container}>
       <SafeAreaView style={styles.safe}>
+        {/* Header */}
+        <View style={styles.header}>
+          <Ionicons name="book-outline" size={22} color="#ff8d8c" />
+          <Text style={styles.headerTitle}>GUIA DE CUIDADOS</Text>
+          <View style={{ width: 22 }} />
+        </View>
+
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 
-          <Text style={styles.pageTitle}>Guia de Cuidados</Text>
           <Text style={styles.pageSub}>Siga cada fase para uma cicatrização perfeita</Text>
 
           {/* Fases */}
@@ -239,9 +242,13 @@ export default function CuidadosScreen() {
                         onPress={() => toggleChecklist(key)}
                         activeOpacity={0.7}
                       >
-                        <View style={[styles.checkBox, feito && styles.checkBoxFeito]}>
-                          {feito && <Ionicons name="checkmark" size={12} color="#fff" />}
-                        </View>
+                        {feito ? (
+                          <View style={styles.checkBoxChecked}>
+                            <Ionicons name="checkmark" size={14} color="#fff" />
+                          </View>
+                        ) : (
+                          <View style={styles.checkBox} />
+                        )}
                         <Text style={[styles.checkTexto, feito && styles.checkTextoFeito]}>{item}</Text>
                       </TouchableOpacity>
                     );
@@ -270,7 +277,7 @@ export default function CuidadosScreen() {
               onPress={() => handleAlerta(a.texto)}
               activeOpacity={0.7}
             >
-              <Ionicons name={a.icone as any} size={18} color={a.nivel === 'alto' ? '#FF0000' : '#FFAA00'} />
+              <Ionicons name={a.icone as any} size={18} color={a.nivel === 'alto' ? '#FF4757' : '#FFD700'} />
               <Text style={styles.alertaTexto}>{a.texto}</Text>
               <Ionicons name="chevron-forward" size={14} color="#555" />
             </TouchableOpacity>
@@ -278,21 +285,23 @@ export default function CuidadosScreen() {
 
           {/* Produtos recomendados */}
           <Text style={styles.sectionTitle}>🧴 Produtos recomendados</Text>
-          {[
-            { nome: 'Bepantol Derma', uso: 'Pomada cicatrizante — fases 1 e 2' },
-            { nome: 'Vaseline Intensive Care', uso: 'Hidratante — fases 2, 3 e 4' },
-            { nome: 'Protetor Solar FPS 50+', uso: 'Proteção solar — fase 4 em diante' },
-            { nome: 'Sabão neutro (sem perfume)', uso: 'Limpeza diária — todas as fases' },
-            { nome: 'Bepantol líquido', uso: 'Hidratação extra em pele muito seca' },
-          ].map((p, i) => (
-            <View key={i} style={styles.produtoItem}>
-              <Ionicons name="checkmark-circle" size={18} color="#FF0000" />
-              <View style={{ flex: 1 }}>
-                <Text style={styles.produtoNome}>{p.nome}</Text>
-                <Text style={styles.produtoUso}>{p.uso}</Text>
+          <View style={styles.produtosCard}>
+            {[
+              { nome: 'Bepantol Derma', uso: 'Pomada cicatrizante — fases 1 e 2' },
+              { nome: 'Vaseline Intensive Care', uso: 'Hidratante — fases 2, 3 e 4' },
+              { nome: 'Protetor Solar FPS 50+', uso: 'Proteção solar — fase 4 em diante' },
+              { nome: 'Sabão neutro (sem perfume)', uso: 'Limpeza diária — todas as fases' },
+              { nome: 'Bepantol líquido', uso: 'Hidratação extra em pele muito seca' },
+            ].map((p, i, arr) => (
+              <View key={i} style={[styles.produtoItem, i < arr.length - 1 && styles.produtoBorder]}>
+                <Ionicons name="checkmark-circle" size={18} color="#FF4757" />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.produtoNome}>{p.nome}</Text>
+                  <Text style={styles.produtoUso}>{p.uso}</Text>
+                </View>
               </View>
-            </View>
-          ))}
+            ))}
+          </View>
 
           {/* FAQ */}
           <Text style={styles.sectionTitle}>❓ Perguntas frequentes</Text>
@@ -314,88 +323,130 @@ export default function CuidadosScreen() {
 
         </ScrollView>
       </SafeAreaView>
-    </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  gradient: { flex: 1 },
+  container: { flex: 1, backgroundColor: '#0e0e0e' },
   safe: { flex: 1 },
-  scroll: { paddingHorizontal: 22, paddingBottom: 30 },
+  scroll: { paddingHorizontal: 24, paddingBottom: 120 },
 
-  pageTitle: { fontSize: 24, fontWeight: '700', color: '#fff', marginTop: 20 },
-  pageSub: { fontSize: 13, color: '#888', marginTop: 4, marginBottom: 24 },
-
-  faseCard: {
-    backgroundColor: 'rgba(255,255,255,0.05)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
-    borderRadius: 14, marginBottom: 10, overflow: 'hidden',
+  // Header
+  header: {
+    flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 10,
+    paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: '#262626',
   },
-  faseHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 },
+  headerTitle: {
+    fontSize: 18, fontWeight: '700', color: '#ff8d8c', letterSpacing: 2,
+  },
+
+  pageSub: { fontSize: 14, color: '#999', marginTop: 20, marginBottom: 24 },
+
+  // Fases
+  faseCard: {
+    backgroundColor: '#1E1E1E',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
+    borderRadius: 12, marginBottom: 10, overflow: 'hidden',
+  },
+  faseHeader: {
+    flexDirection: 'row', justifyContent: 'space-between',
+    alignItems: 'center', padding: 16,
+  },
   faseHeaderLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  faseIcone: { width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center' },
+  faseIcone: {
+    width: 40, height: 40, borderRadius: 20,
+    justifyContent: 'center', alignItems: 'center',
+  },
   faseTitulo: { fontSize: 14, fontWeight: '600', color: '#fff' },
   faseDias: { fontSize: 12, marginTop: 2 },
-  faseBody: { paddingHorizontal: 16, paddingBottom: 16, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.06)' },
-  faseDescricao: { fontSize: 13, color: '#aaa', marginTop: 12, marginBottom: 14, lineHeight: 20 },
+  faseBody: {
+    paddingHorizontal: 16, paddingBottom: 16,
+    borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.05)',
+  },
+  faseDescricao: { fontSize: 13, color: '#999', marginTop: 12, marginBottom: 14, lineHeight: 20 },
 
+  // Período selector
   periodoSelector: { flexDirection: 'row', gap: 8, marginBottom: 14 },
   periodoBtn: {
-    flex: 1, paddingVertical: 8, borderRadius: 10,
+    flex: 1, paddingVertical: 8, borderRadius: 8,
     backgroundColor: 'rgba(255,255,255,0.05)',
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
     alignItems: 'center',
   },
-  periodoBtnAtivo: { backgroundColor: 'rgba(255,0,0,0.15)', borderColor: 'rgba(255,0,0,0.4)' },
+  periodoBtnAtivo: { backgroundColor: 'rgba(255,71,87,0.15)', borderColor: 'rgba(255,71,87,0.4)' },
   periodoBtnText: { fontSize: 11, color: '#666', fontWeight: '600' },
-  periodoBtnTextAtivo: { color: '#FF0000' },
+  periodoBtnTextAtivo: { color: '#FF4757' },
 
-  checklistTitulo: { fontSize: 12, color: '#888', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 },
+  // Checklist
+  checklistTitulo: { fontSize: 12, color: '#999', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 },
   checkItem: {
-    flexDirection: 'row', alignItems: 'flex-start', gap: 10,
+    flexDirection: 'row', alignItems: 'flex-start', gap: 12,
     backgroundColor: 'rgba(255,255,255,0.03)',
     borderRadius: 10, padding: 12, marginBottom: 6,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
   },
   checkItemFeito: { opacity: 0.45 },
   checkBox: {
-    width: 20, height: 20, borderRadius: 10,
-    borderWidth: 1.5, borderColor: '#555',
-    justifyContent: 'center', alignItems: 'center', marginTop: 1,
+    width: 22, height: 22, borderRadius: 11,
+    borderWidth: 2, borderColor: '#555',
+    marginTop: 1,
   },
-  checkBoxFeito: { backgroundColor: '#FF0000', borderColor: '#FF0000' },
-  checkTexto: { fontSize: 13, color: '#ccc', flex: 1, lineHeight: 19 },
+  checkBoxChecked: {
+    width: 22, height: 22, borderRadius: 11,
+    backgroundColor: '#FF4757',
+    justifyContent: 'center', alignItems: 'center',
+    marginTop: 1,
+  },
+  checkTexto: { fontSize: 13, color: '#ddd', flex: 1, lineHeight: 19 },
   checkTextoFeito: { textDecorationLine: 'line-through', color: '#555' },
 
+  // Cuidados
   cuidadoItem: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, marginBottom: 8 },
   cuidadoBullet: { width: 6, height: 6, borderRadius: 3, marginTop: 6 },
-  cuidadoTexto: { fontSize: 13, color: '#ccc', flex: 1, lineHeight: 20 },
+  cuidadoTexto: { fontSize: 13, color: '#ddd', flex: 1, lineHeight: 20 },
 
-  sectionTitle: { fontSize: 16, fontWeight: '700', color: '#fff', marginTop: 28, marginBottom: 12 },
-  alertaIntro: { fontSize: 13, color: '#888', marginBottom: 10 },
+  // Sections
+  sectionTitle: { fontSize: 18, fontWeight: '700', color: '#fff', marginTop: 28, marginBottom: 12 },
+
+  // Alertas
+  alertaIntro: { fontSize: 13, color: '#999', marginBottom: 10 },
   alertaItem: {
-    flexDirection: 'row', alignItems: 'center', gap: 10,
-    backgroundColor: 'rgba(255,255,255,0.04)',
-    borderRadius: 10, padding: 12, marginBottom: 8,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)',
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    backgroundColor: '#1E1E1E',
+    borderRadius: 10, padding: 14, marginBottom: 8,
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
   },
-  alertaAlto: { borderColor: 'rgba(255,0,0,0.2)', backgroundColor: 'rgba(255,0,0,0.05)' },
-  alertaTexto: { fontSize: 13, color: '#ccc', flex: 1 },
+  alertaAlto: { borderColor: 'rgba(255,71,87,0.2)', backgroundColor: 'rgba(255,71,87,0.05)' },
+  alertaTexto: { fontSize: 13, color: '#ddd', flex: 1 },
 
+  // Produtos
+  produtosCard: {
+    backgroundColor: '#1E1E1E',
+    borderRadius: 12, borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
+    overflow: 'hidden',
+  },
   produtoItem: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
-    paddingVertical: 12, borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.06)',
+    padding: 14,
   },
-  produtoNome: { fontSize: 14, color: '#fff', fontWeight: '500' },
-  produtoUso: { fontSize: 12, color: '#888', marginTop: 2 },
+  produtoBorder: {
+    borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.05)',
+  },
+  produtoNome: { fontSize: 14, color: '#fff', fontWeight: '600' },
+  produtoUso: { fontSize: 12, color: '#999', marginTop: 2 },
 
+  // FAQ
   faqCard: {
-    backgroundColor: 'rgba(255,255,255,0.04)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)',
+    backgroundColor: '#1E1E1E',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
     borderRadius: 12, marginBottom: 8, overflow: 'hidden',
   },
-  faqHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 14 },
+  faqHeader: {
+    flexDirection: 'row', justifyContent: 'space-between',
+    alignItems: 'center', padding: 14,
+  },
   faqPergunta: { fontSize: 14, color: '#fff', fontWeight: '500', flex: 1, marginRight: 8 },
-  faqResposta: { fontSize: 13, color: '#aaa', lineHeight: 20, paddingHorizontal: 14, paddingBottom: 14 },
+  faqResposta: { fontSize: 13, color: '#999', lineHeight: 20, paddingHorizontal: 14, paddingBottom: 14 },
 });
