@@ -6,6 +6,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/context/auth';
+import { useNotifications } from '@/hooks/useNotifications';
+import { useBadges } from '@/hooks/useBadges';
 
 const historicoInicial = [
   { id: 1, nome: 'Dragão nas Costas', artista: 'Carlos Ink', data: '10/07/2025', status: 'em_cuidado' },
@@ -15,12 +17,14 @@ const historicoInicial = [
 
 export default function PerfilScreen() {
   const { logout, user } = useAuth();
+  const { badges, desbloqueadas, totalBadges } = useBadges(user?.id);
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [nomeEdit, setNomeEdit] = useState('');
   const [emailEdit, setEmailEdit] = useState('');
   const [modalVisivel, setModalVisivel] = useState(false);
-  const [notificacoes, setNotificacoes] = useState(true);
+  const { prefs: notifPrefs, toggleAtivas } = useNotifications();
+  const notificacoes = notifPrefs.ativas;
   const [temaEscuro, setTemaEscuro] = useState(true);
   const [historico] = useState(historicoInicial);
 
@@ -149,13 +153,45 @@ export default function PerfilScreen() {
             ))}
           </View>
 
+          {/* Conquistas / Badges */}
+          <View style={styles.badgesSectionHeader}>
+            <Text style={styles.sectionTitle}>Conquistas</Text>
+            <Text style={styles.badgesCounter}>{desbloqueadas}/{totalBadges}</Text>
+          </View>
+          <View style={styles.badgesGrid}>
+            {badges.map((badge) => (
+              <View key={badge.id} style={[styles.badgeCard, !badge.desbloqueado && styles.badgeCardLocked]}>
+                <View style={[styles.badgeIconCircle, {
+                  backgroundColor: badge.desbloqueado ? 'rgba(255,71,87,0.15)' : 'rgba(255,255,255,0.05)',
+                }]}>
+                  <Ionicons
+                    name={badge.icone as any}
+                    size={24}
+                    color={badge.desbloqueado ? '#FF4757' : '#555'}
+                  />
+                </View>
+                <Text style={[styles.badgeName, !badge.desbloqueado && { color: '#555' }]} numberOfLines={1}>
+                  {badge.nome}
+                </Text>
+                {!badge.desbloqueado && badge.progresso !== undefined && (
+                  <View style={styles.badgeProgressBar}>
+                    <View style={[styles.badgeProgressFill, { width: `${badge.progresso}%` }]} />
+                  </View>
+                )}
+                {badge.desbloqueado && (
+                  <Ionicons name="checkmark-circle" size={14} color="#22c55e" />
+                )}
+              </View>
+            ))}
+          </View>
+
           {/* Configurações - matches HTML settings section */}
           <Text style={styles.sectionTitle}>Configurações</Text>
           <View style={styles.settingsContainer}>
             {/* Notificações toggle */}
             <TouchableOpacity
               style={[styles.settingItem, styles.settingBorder]}
-              onPress={() => setNotificacoes(!notificacoes)}
+              onPress={() => toggleAtivas()}
               activeOpacity={0.7}
             >
               <Text style={styles.settingText}>Notificações</Text>
@@ -382,6 +418,39 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   logoutText: { color: '#FF4757', fontSize: 16, fontWeight: '700' },
+
+  // Badges
+  badgesSectionHeader: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    marginBottom: 16,
+  },
+  badgesCounter: { fontSize: 13, color: '#FF4757', fontWeight: '600' },
+  badgesGrid: {
+    flexDirection: 'row', flexWrap: 'wrap', gap: 10,
+    marginBottom: 32,
+  },
+  badgeCard: {
+    width: '31%', alignItems: 'center',
+    backgroundColor: '#1E1E1E',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
+    borderRadius: 12, padding: 14, gap: 8,
+  },
+  badgeCardLocked: { opacity: 0.6 },
+  badgeIconCircle: {
+    width: 48, height: 48, borderRadius: 24,
+    justifyContent: 'center', alignItems: 'center',
+  },
+  badgeName: {
+    fontSize: 11, fontWeight: '600', color: '#fff',
+    textAlign: 'center',
+  },
+  badgeProgressBar: {
+    width: '100%', height: 3, backgroundColor: '#333',
+    borderRadius: 1.5, overflow: 'hidden',
+  },
+  badgeProgressFill: {
+    height: 3, backgroundColor: '#FF4757', borderRadius: 1.5,
+  },
 
   // Modal
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'flex-end' },

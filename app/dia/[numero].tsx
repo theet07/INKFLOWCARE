@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -18,10 +17,56 @@ const periodoIcones: Record<string, any> = {
   NOITE: 'moon',
 };
 
+// Dicas por fase
+const dicasPorFase: Record<string, { icone: string; cor: string; texto: string }[]> = {
+  FASE_1_PRIMEIRAS_24H: [
+    { icone: 'bandage-outline', cor: '#FF4757', texto: 'Mantenha o curativo por 2-4 horas após a sessão' },
+    { icone: 'water-outline', cor: '#3B82F6', texto: 'Lave com água morna e sabão neutro' },
+    { icone: 'hand-left-outline', cor: '#FF8C00', texto: 'Não toque na tatuagem com as mãos sujas' },
+    { icone: 'bed-outline', cor: '#8B5CF6', texto: 'Durma com roupa leve e folgada' },
+  ],
+  FASE_2_INICIAL: [
+    { icone: 'water-outline', cor: '#3B82F6', texto: 'Lave a tatuagem 2-3x ao dia com sabão neutro' },
+    { icone: 'color-fill-outline', cor: '#22c55e', texto: 'Aplique pomada cicatrizante em camada fina' },
+    { icone: 'sunny-outline', cor: '#FFD700', texto: 'Evite exposição direta ao sol' },
+    { icone: 'shirt-outline', cor: '#FF8C00', texto: 'Use roupas de algodão sobre a região' },
+  ],
+  FASE_3_DESCAMACAO: [
+    { icone: 'alert-circle-outline', cor: '#FF4757', texto: 'NÃO arranque as casquinhas! Deixe cair naturalmente' },
+    { icone: 'color-fill-outline', cor: '#22c55e', texto: 'Hidrate bastante — a pele está se renovando' },
+    { icone: 'fitness-outline', cor: '#FF8C00', texto: 'Evite exercícios intensos que causem atrito' },
+    { icone: 'water-outline', cor: '#3B82F6', texto: 'Não mergulhe em piscinas ou mar' },
+  ],
+  FASE_4_PROFUNDA: [
+    { icone: 'sunny-outline', cor: '#FFD700', texto: 'Use protetor solar FPS 50+ sempre que expor' },
+    { icone: 'color-fill-outline', cor: '#22c55e', texto: 'Continue hidratando diariamente' },
+    { icone: 'checkmark-circle-outline', cor: '#3B82F6', texto: 'A cicatrização profunda continua por semanas' },
+    { icone: 'star-outline', cor: '#8B5CF6', texto: 'Sua tatuagem está quase 100% curada!' },
+  ],
+};
+
+// Mock: checklist mockado para quando não há dados reais
+const MOCK_CHECKLIST = {
+  MANHA: [
+    { id: 1, periodo: 'MANHA', ordem: 1, descricao: 'Lavar a tatuagem com sabão neutro', concluido: true },
+    { id: 2, periodo: 'MANHA', ordem: 2, descricao: 'Secar com toalha de papel (não esfregar)', concluido: true },
+    { id: 3, periodo: 'MANHA', ordem: 3, descricao: 'Aplicar pomada cicatrizante', concluido: false },
+  ],
+  TARDE: [
+    { id: 4, periodo: 'TARDE', ordem: 1, descricao: 'Verificar vermelhidão ou inchaço', concluido: false },
+    { id: 5, periodo: 'TARDE', ordem: 2, descricao: 'Aplicar pomada cicatrizante', concluido: false },
+  ],
+  NOITE: [
+    { id: 6, periodo: 'NOITE', ordem: 1, descricao: 'Lavar a tatuagem novamente', concluido: false },
+    { id: 7, periodo: 'NOITE', ordem: 2, descricao: 'Aplicar pomada antes de dormir', concluido: false },
+    { id: 8, periodo: 'NOITE', ordem: 3, descricao: 'Usar roupa de algodão para dormir', concluido: false },
+  ],
+};
+
 export default function DiaScreen() {
   const router = useRouter();
   const { numero } = useLocalSearchParams();
-  const numeroDia = parseInt(numero as string);
+  const numeroDia = parseInt(numero as string) || 18;
 
   const { cicatrizacao, loading: cicLoading } = useCicatrizacao();
   const { checklist, loading: checklistLoading, toggleItem } = useChecklist(
@@ -30,26 +75,42 @@ export default function DiaScreen() {
   );
 
   const loading = cicLoading || checklistLoading;
+  const usandoMock = checklist.length === 0 && !loading;
 
   // Agrupar checklist por período
-  const checklistPorPeriodo = {
-    MANHA: checklist.filter(item => item.periodo === 'MANHA').sort((a, b) => a.ordem - b.ordem),
-    TARDE: checklist.filter(item => item.periodo === 'TARDE').sort((a, b) => a.ordem - b.ordem),
-    NOITE: checklist.filter(item => item.periodo === 'NOITE').sort((a, b) => a.ordem - b.ordem),
-  };
+  const checklistPorPeriodo = usandoMock
+    ? MOCK_CHECKLIST
+    : {
+        MANHA: checklist.filter(item => item.periodo === 'MANHA').sort((a, b) => a.ordem - b.ordem),
+        TARDE: checklist.filter(item => item.periodo === 'TARDE').sort((a, b) => a.ordem - b.ordem),
+        NOITE: checklist.filter(item => item.periodo === 'NOITE').sort((a, b) => a.ordem - b.ordem),
+      };
 
-  const totalItens = checklist.length;
-  const itensConcluidos = checklist.filter(item => item.concluido).length;
+  const allItems = usandoMock
+    ? [...MOCK_CHECKLIST.MANHA, ...MOCK_CHECKLIST.TARDE, ...MOCK_CHECKLIST.NOITE]
+    : checklist;
+  const totalItens = allItems.length;
+  const itensConcluidos = allItems.filter((item: any) => item.concluido).length;
   const progresso = totalItens > 0 ? (itensConcluidos / totalItens) * 100 : 0;
 
+  // Determinar fase e XP/estrelas mockados
+  const faseAtual = cicatrizacao?.faseAtual || 'FASE_3_DESCAMACAO';
+  const dicas = dicasPorFase[faseAtual] || dicasPorFase.FASE_3_DESCAMACAO;
+
+  // Mock: XP e estrelas baseado no progresso
+  const estrelas = progresso >= 100 ? 3 : progresso >= 50 ? 2 : progresso > 0 ? 1 : 0;
+  const xpGanho = Math.round(progresso * 2);
+
   async function handleToggle(itemId: number) {
-    await toggleItem(itemId);
+    if (!usandoMock) {
+      await toggleItem(itemId);
+    }
   }
 
   return (
-    <LinearGradient colors={['#0e0e0e', '#0a0a2e', '#0d1b4b']} style={styles.gradient}>
+    <View style={styles.container}>
       <SafeAreaView style={styles.safe} edges={['top']}>
-        
+
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
@@ -59,36 +120,87 @@ export default function DiaScreen() {
           <View style={{ width: 40 }} />
         </View>
 
-        {/* Progress Card */}
-        <View style={styles.progressCard}>
-          <View style={styles.progressHeader}>
-            <Text style={styles.progressLabel}>PROGRESSO DO DIA</Text>
-            <Text style={styles.progressPercent}>{Math.round(progresso)}%</Text>
-          </View>
-          <View style={styles.progressBarContainer}>
-            <View style={[styles.progressBarFill, { width: `${progresso}%` }]} />
-          </View>
-          <Text style={styles.progressText}>
-            {itensConcluidos}/{totalItens} tarefas concluídas
-          </Text>
-        </View>
-
-        {/* Checklist */}
-        <ScrollView 
+        <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
+
+          {/* Card de Resumo */}
+          <View style={styles.summaryCard}>
+            <View style={styles.summaryRow}>
+              {/* XP */}
+              <View style={styles.summaryItem}>
+                <View style={[styles.summaryIconCircle, { backgroundColor: 'rgba(255,71,87,0.15)' }]}>
+                  <Ionicons name="flash" size={20} color="#FF4757" />
+                </View>
+                <Text style={styles.summaryValue}>{xpGanho}</Text>
+                <Text style={styles.summaryLabel}>XP GANHO</Text>
+              </View>
+
+              {/* Estrelas */}
+              <View style={styles.summaryItem}>
+                <View style={[styles.summaryIconCircle, { backgroundColor: 'rgba(255,215,0,0.15)' }]}>
+                  <Ionicons name="star" size={20} color="#FFD700" />
+                </View>
+                <View style={styles.starsRow}>
+                  {[1, 2, 3].map(i => (
+                    <Ionicons
+                      key={i}
+                      name="star"
+                      size={16}
+                      color={i <= estrelas ? '#FFD700' : '#333'}
+                    />
+                  ))}
+                </View>
+                <Text style={styles.summaryLabel}>ESTRELAS</Text>
+              </View>
+
+              {/* Status */}
+              <View style={styles.summaryItem}>
+                <View style={[styles.summaryIconCircle, {
+                  backgroundColor: progresso >= 100
+                    ? 'rgba(34,197,94,0.15)'
+                    : progresso > 0
+                      ? 'rgba(255,140,0,0.15)'
+                      : 'rgba(255,255,255,0.05)'
+                }]}>
+                  <Ionicons
+                    name={progresso >= 100 ? 'checkmark-circle' : progresso > 0 ? 'time' : 'hourglass'}
+                    size={20}
+                    color={progresso >= 100 ? '#22c55e' : progresso > 0 ? '#FF8C00' : '#555'}
+                  />
+                </View>
+                <Text style={[styles.summaryValue, {
+                  color: progresso >= 100 ? '#22c55e' : progresso > 0 ? '#FF8C00' : '#555',
+                  fontSize: 12,
+                }]}>
+                  {progresso >= 100 ? 'COMPLETO' : progresso > 0 ? 'EM ANDAMENTO' : 'PENDENTE'}
+                </Text>
+                <Text style={styles.summaryLabel}>STATUS</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Progress Bar */}
+          <View style={styles.progressSection}>
+            <View style={styles.progressHeader}>
+              <Text style={styles.progressLabel}>PROGRESSO DO DIA</Text>
+              <Text style={styles.progressPercent}>{Math.round(progresso)}%</Text>
+            </View>
+            <View style={styles.progressBarContainer}>
+              <View style={[styles.progressBarFill, { width: `${progresso}%` }]} />
+            </View>
+            <Text style={styles.progressText}>
+              {itensConcluidos}/{totalItens} tarefas concluídas
+            </Text>
+          </View>
+
+          {/* Checklist */}
           {loading ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#FF0000" />
+              <ActivityIndicator size="large" color="#FF4757" />
               <Text style={styles.loadingText}>Carregando checklist...</Text>
-            </View>
-          ) : checklist.length === 0 ? (
-            <View style={styles.emptyContainer}>
-              <Ionicons name="clipboard-outline" size={64} color="#555" />
-              <Text style={styles.emptyTitle}>Nenhuma tarefa disponível</Text>
-              <Text style={styles.emptySubtitle}>Este dia ainda não possui checklist</Text>
             </View>
           ) : (
             <>
@@ -120,9 +232,28 @@ export default function DiaScreen() {
               )}
             </>
           )}
+
+          {/* Dicas do Dia */}
+          <View style={styles.dicasSection}>
+            <View style={styles.dicasHeader}>
+              <Ionicons name="bulb-outline" size={20} color="#FFD700" />
+              <Text style={styles.dicasTitle}>Dicas do Dia</Text>
+            </View>
+            <View style={styles.dicasContainer}>
+              {dicas.map((dica, index) => (
+                <View key={index} style={styles.dicaItem}>
+                  <View style={[styles.dicaIconCircle, { backgroundColor: `${dica.cor}20` }]}>
+                    <Ionicons name={dica.icone as any} size={18} color={dica.cor} />
+                  </View>
+                  <Text style={styles.dicaText}>{dica.texto}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+
         </ScrollView>
       </SafeAreaView>
-    </LinearGradient>
+    </View>
   );
 }
 
@@ -152,9 +283,13 @@ function PeriodoSection({ periodo, itens, onToggle }: any) {
             onPress={() => onToggle(item.id)}
             activeOpacity={0.7}
           >
-            <View style={[styles.checkbox, item.concluido && styles.checkboxChecked]}>
-              {item.concluido && <Ionicons name="checkmark" size={16} color="#fff" />}
-            </View>
+            {item.concluido ? (
+              <View style={styles.checkboxChecked}>
+                <Ionicons name="checkmark" size={16} color="#fff" />
+              </View>
+            ) : (
+              <View style={styles.checkboxUnchecked} />
+            )}
             <Text style={[styles.checklistText, item.concluido && styles.checklistTextDone]}>
               {item.descricao}
             </Text>
@@ -166,9 +301,12 @@ function PeriodoSection({ periodo, itens, onToggle }: any) {
 }
 
 const styles = StyleSheet.create({
-  gradient: { flex: 1 },
+  container: { flex: 1, backgroundColor: '#0e0e0e' },
   safe: { flex: 1 },
-  
+  scrollView: { flex: 1 },
+  scrollContent: { paddingHorizontal: 24, paddingBottom: 100 },
+
+  // Header
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -180,21 +318,35 @@ const styles = StyleSheet.create({
   },
   backBtn: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#ff8d8c',
-    letterSpacing: 2,
+    fontSize: 18, fontWeight: '700',
+    color: '#ff8d8c', letterSpacing: 2,
   },
 
-  progressCard: {
-    marginHorizontal: 16,
-    marginTop: 16,
-    marginBottom: 24,
-    backgroundColor: 'rgba(38, 38, 38, 0.6)',
-    borderRadius: 12,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
+  // Summary Card (XP, Stars, Status)
+  summaryCard: {
+    backgroundColor: '#1E1E1E',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
+    borderRadius: 12, padding: 20,
+    marginTop: 24, marginBottom: 20,
+  },
+  summaryRow: { flexDirection: 'row', justifyContent: 'space-around' },
+  summaryItem: { alignItems: 'center', gap: 6 },
+  summaryIconCircle: {
+    width: 44, height: 44, borderRadius: 22,
+    justifyContent: 'center', alignItems: 'center',
+  },
+  summaryValue: { fontSize: 18, fontWeight: '700', color: '#fff' },
+  summaryLabel: {
+    fontSize: 10, color: '#999', fontWeight: '700',
+    textTransform: 'uppercase', letterSpacing: 1,
+  },
+  starsRow: { flexDirection: 'row', gap: 2 },
+
+  // Progress section
+  progressSection: {
+    backgroundColor: '#1E1E1E',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
+    borderRadius: 12, padding: 20, marginBottom: 24,
   },
   progressHeader: {
     flexDirection: 'row',
@@ -203,131 +355,84 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   progressLabel: {
-    fontSize: 11,
-    color: '#adaaaa',
-    textTransform: 'uppercase',
-    letterSpacing: 1.5,
-    fontWeight: '700',
+    fontSize: 11, color: '#999',
+    textTransform: 'uppercase', letterSpacing: 1.5, fontWeight: '700',
   },
-  progressPercent: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#ff8d8c',
-  },
+  progressPercent: { fontSize: 24, fontWeight: '700', color: '#FF4757' },
   progressBarContainer: {
-    height: 8,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 4,
-    overflow: 'hidden',
-    marginBottom: 8,
+    height: 6, backgroundColor: '#2A2A2A',
+    borderRadius: 3, overflow: 'hidden', marginBottom: 8,
   },
-  progressBarFill: {
-    height: 8,
-    backgroundColor: '#ff8d8c',
-    borderRadius: 4,
-  },
-  progressText: {
-    fontSize: 12,
-    color: '#adaaaa',
-  },
+  progressBarFill: { height: 6, backgroundColor: '#FF4757', borderRadius: 3 },
+  progressText: { fontSize: 12, color: '#999' },
 
-  scrollView: { flex: 1 },
-  scrollContent: { paddingHorizontal: 16, paddingBottom: 100 },
-
+  // Loading / Empty
   loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 60,
+    justifyContent: 'center', alignItems: 'center', paddingVertical: 60,
   },
-  loadingText: { color: '#888', marginTop: 12, fontSize: 13 },
+  loadingText: { color: '#999', marginTop: 12, fontSize: 13 },
 
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 60,
-    paddingHorizontal: 32,
-  },
-  emptyTitle: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
-    marginTop: 16,
-  },
-  emptySubtitle: {
-    color: '#888',
-    fontSize: 14,
-    marginTop: 8,
-    textAlign: 'center',
-  },
-
-  periodoSection: {
-    marginBottom: 24,
-  },
+  // Período sections
+  periodoSection: { marginBottom: 24 },
   periodoHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 12,
   },
-  periodoTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  periodoTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#fff',
-  },
-  periodoCounter: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#ff8d8c',
-  },
+  periodoTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  periodoTitle: { fontSize: 16, fontWeight: '700', color: '#fff' },
+  periodoCounter: { fontSize: 13, fontWeight: '600', color: '#FF4757' },
 
   periodoCard: {
-    backgroundColor: 'rgba(38, 38, 38, 0.6)',
-    borderRadius: 12,
-    borderWidth: 1,
+    backgroundColor: '#1E1E1E',
+    borderRadius: 12, borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.05)',
     overflow: 'hidden',
   },
 
   checklistItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    gap: 12,
+    flexDirection: 'row', alignItems: 'center',
+    padding: 16, gap: 14,
   },
   checklistItemBorder: {
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255,255,255,0.05)',
   },
 
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#555',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   checkboxChecked: {
-    backgroundColor: '#ff8d8c',
-    borderColor: '#ff8d8c',
+    width: 26, height: 26, borderRadius: 13,
+    backgroundColor: '#FF4757',
+    justifyContent: 'center', alignItems: 'center',
+  },
+  checkboxUnchecked: {
+    width: 26, height: 26, borderRadius: 13,
+    borderWidth: 2, borderColor: '#555',
   },
 
-  checklistText: {
-    flex: 1,
-    fontSize: 14,
-    color: '#fff',
-    fontWeight: '500',
+  checklistText: { flex: 1, fontSize: 15, color: '#fff', fontWeight: '500' },
+  checklistTextDone: { color: '#555', textDecorationLine: 'line-through' },
+
+  // Dicas
+  dicasSection: { marginBottom: 32, marginTop: 8 },
+  dicasHeader: {
+    flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16,
   },
-  checklistTextDone: {
-    color: '#555',
-    textDecorationLine: 'line-through',
+  dicasTitle: { fontSize: 18, fontWeight: '700', color: '#fff' },
+  dicasContainer: {
+    backgroundColor: '#1E1E1E',
+    borderRadius: 12, borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
+    overflow: 'hidden',
   },
+  dicaItem: {
+    flexDirection: 'row', alignItems: 'center',
+    padding: 16, gap: 14,
+    borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.05)',
+  },
+  dicaIconCircle: {
+    width: 36, height: 36, borderRadius: 18,
+    justifyContent: 'center', alignItems: 'center',
+  },
+  dicaText: { flex: 1, fontSize: 14, color: '#ddd', lineHeight: 20 },
 });
