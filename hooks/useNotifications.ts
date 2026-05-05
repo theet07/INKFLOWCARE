@@ -40,18 +40,22 @@ export function useNotifications() {
     carregarPrefs();
     registrarPermissoes();
 
-    // Listeners
-    notifListener.current = Notifications.addNotificationReceivedListener(notification => {
-      console.log('[NOTIF] Recebida:', notification.request.content.title);
-    });
+    if (Platform.OS !== 'web') {
+      // Listeners — only on native
+      notifListener.current = Notifications.addNotificationReceivedListener(notification => {
+        console.log('[NOTIF] Recebida:', notification.request.content.title);
+      });
 
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log('[NOTIF] Interação:', response.notification.request.content.title);
-    });
+      responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+        console.log('[NOTIF] Interação:', response.notification.request.content.title);
+      });
+    }
 
     return () => {
-      if (notifListener.current) Notifications.removeNotificationSubscription(notifListener.current);
-      if (responseListener.current) Notifications.removeNotificationSubscription(responseListener.current);
+      if (Platform.OS !== 'web') {
+        notifListener.current?.remove();
+        responseListener.current?.remove();
+      }
     };
   }, []);
 
