@@ -46,6 +46,18 @@ INKFLOWCARE/             ← App Mobile (React Native)
 4. **Sem estimativas de tempo** em documentação ou respostas
 5. **Sem comentários verbose** — código deve ser autoexplicativo
 
+### Regras de Segurança e Confidencialidade (CRÍTICO)
+- **Nunca commitar credenciais reais** — senhas, tokens, API keys, secrets
+- **Sempre usar variáveis de ambiente** — `${NOME_DA_VAR}` no `application.properties`, nunca valores hardcoded
+- **Arquivos sensíveis devem estar no `.gitignore`** antes de qualquer commit:
+  - `.env` e variantes (`*.env`, `.env.local`, `.env.production`)
+  - `application-local.properties`, `application-dev.properties`, `application-prod.properties`
+  - Certificados e chaves: `*.key`, `*.pem`, `*.p12`, `*.jks`
+  - Arquivos com `*secret*`, `*password*`, `*credentials*` no nome
+- **Credenciais de teste** (ex: `cat@gmail.com` / `cat`) só podem aparecer em docs se forem dados descartáveis sem acesso a produção
+- **Antes de qualquer push**, verificar se nenhum arquivo com valor real de credencial está staged
+- **Se uma credencial for acidentalmente commitada**: revogar imediatamente a credencial no serviço (não basta remover do código)
+
 ### Regras de Compatibilidade (CRÍTICO)
 - **Nunca mudar** URLs de endpoints existentes
 - **Nunca remover** campos de response JSON
