@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const fases = [
@@ -143,12 +143,12 @@ const fases = [
 ];
 
 const alertas = [
-  { icone: 'warning-outline', texto: 'Vermelhidão excessiva após 3 dias', nivel: 'alto' },
-  { icone: 'thermometer-outline', texto: 'Febre ou calor intenso na área', nivel: 'alto' },
-  { icone: 'alert-circle-outline', texto: 'Pus ou secreção com odor', nivel: 'alto' },
-  { icone: 'skull-outline', texto: 'Inchaço que aumenta após 48h', nivel: 'alto' },
-  { icone: 'information-circle-outline', texto: 'Coceira intensa (normal, mas monitore)', nivel: 'baixo' },
-  { icone: 'color-fill-outline', texto: 'Cores desbotando muito rápido', nivel: 'baixo' },
+  { icone: 'warning-outline', texto: 'Vermelhidão excessiva após 3 dias', descricao: 'Um pouco de vermelhidão nos primeiros dias é normal. No entanto, se a vermelhidão não diminuir ou aumentar após o 3º dia, e se espalhar para fora do desenho da tatuagem, pode ser o primeiro sinal de infecção.', nivel: 'alto' },
+  { icone: 'thermometer-outline', texto: 'Febre ou calor intenso na área', descricao: 'A área tatuada ficar quente nas primeiras 48h é esperado. Mas se a área ficar extremamente quente ao toque após esse período, ou se você tiver febre no corpo, procure um médico.', nivel: 'alto' },
+  { icone: 'alert-circle-outline', texto: 'Pus ou secreção com odor', descricao: 'A secreção de plasma claro (com um pouco de tinta) nos primeiros dias é natural. Porém, secreções amareladas, esverdeadas, espessas ou com mau cheiro são sinais clássicos de infecção bacteriana.', nivel: 'alto' },
+  { icone: 'skull-outline', texto: 'Inchaço que aumenta após 48h', descricao: 'O inchaço deve atingir o pico em 24-48 horas e depois regredir. Se o inchaço continuar piorando consideravelmente após o segundo dia, fique alerta.', nivel: 'alto' },
+  { icone: 'information-circle-outline', texto: 'Coceira intensa (normal, mas monitore)', descricao: 'Coceira é um sinal maravilhoso de cicatrização (fase de descamação)! Mas se a coceira for insuportável, acompanhada de bolhas ou espinhas ao redor, pode ser uma reação alérgica à tinta ou pomada.', nivel: 'baixo' },
+  { icone: 'color-fill-outline', texto: 'Cores desbotando muito rápido', descricao: 'As cores perdem o brilho inicial durante a descamação (parecem "opacas"). Isso é normal. Só se preocupe se, após 30 dias, as linhas estiverem completamente falhas, o que sugere que o atrito ou sol danificaram a pele.', nivel: 'baixo' },
 ];
 
 const faq = [
@@ -173,8 +173,14 @@ export default function CuidadosScreen() {
     setChecklistFeito((prev) => ({ ...prev, [key]: !prev[key] }));
   }
 
-  function handleAlerta(texto: string) {
-    Alert.alert('Sinal de alerta', `${texto}\n\nSe notar este sintoma, procure um médico ou dermatologista imediatamente.`, [{ text: 'Entendido' }]);
+  function handleAlerta(alerta: typeof alertas[0]) {
+    const mensagem = `${alerta.descricao}\n\n${alerta.nivel === 'alto' ? '⚠️ Procure um médico ou dermatologista imediatamente.' : '💡 Monitore e continue com os cuidados.'}`;
+    
+    if (Platform.OS === 'web') {
+      window.alert(`Sinal de alerta: ${alerta.texto}\n\n${mensagem}`);
+    } else {
+      Alert.alert('Sinal de alerta', `${alerta.texto}\n\n${mensagem}`, [{ text: 'Entendido' }]);
+    }
   }
 
   return (
@@ -287,7 +293,7 @@ export default function CuidadosScreen() {
             <TouchableOpacity
               key={i}
               style={[styles.alertaItem, a.nivel === 'alto' && styles.alertaAlto]}
-              onPress={() => handleAlerta(a.texto)}
+              onPress={() => handleAlerta(a)}
               activeOpacity={0.7}
             >
               <Ionicons name={a.icone as any} size={18} color={a.nivel === 'alto' ? '#ff8d8c' : '#FFD700'} />
