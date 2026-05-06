@@ -5,6 +5,31 @@ Este documento serve como o único ponto de entrada para todas as informações 
 
 ---
 
+## ⚠️ LEITURA OBRIGATÓRIA DAS 3 PASTAS PRINCIPAIS
+
+**ANTES DE INICIAR QUALQUER DESENVOLVIMENTO, VOCÊ DEVE LER AS 3 PASTAS PRINCIPAIS DO PROJETO:**
+
+1. 📱 **`INKFLOWCARE`** (c:\Users\DMJ\OneDrive\Documentos\INKFLOWCARE)
+   - Mobile App (React Native + Expo 54)
+   - Leia: `docs/*.md`, `context/auth.tsx`, `services/api.ts`, `hooks/*.ts`
+
+2. ⚙️ **`INKFLOWBACKEND`** (c:\Users\DMJ\OneDrive\Documentos\INKFLOWBACKEND)
+   - Backend API (Spring Boot + SQL Server)
+   - Leia: `CLAUDE.md`, `pom.xml`, `src/main/resources/application.properties`
+
+3. 🌐 **`INKFLOWFRONTEND-LIMPO`** (c:\Users\DMJ\OneDrive\Documentos\INKFLOWFRONTEND-LIMPO)
+   - Frontend Web (React + Vite)
+   - Leia: `CLAUDE.md`, `package.json`, `src/pages/*.jsx`
+
+**Esta leitura é OBRIGATÓRIA para entender:**
+- Arquitetura completa do sistema (Mobile + Web + Backend)
+- Endpoints da API e contratos de dados
+- Fluxos de autenticação e autorização
+- Estrutura de dados e modelos
+- Padrões de código e convenções
+
+---
+
 ## 🧭 NAVEGAÇÃO RÁPIDA
 
 Aqui estão os 6 arquivos principais que você precisa conhecer:

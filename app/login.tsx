@@ -11,6 +11,7 @@ import {
   Text,
   TextInput,
   View,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Alert } from 'react-native';
@@ -59,9 +60,11 @@ export default function LoginScreen() {
 
             {/* Logo */}
             <View style={styles.logoContainer}>
-              <View style={styles.logoCircle}>
-                <Ionicons name="color-fill-outline" size={38} color="#ff8d8c" />
-              </View>
+              <Image 
+                source={require('@/assets/images/FAVORICON-INKFLOW.png')} 
+                style={styles.logoImage} 
+                resizeMode="contain"
+              />
               <Text style={styles.appName}>INKFLOWCARE</Text>
               <Text style={styles.appSubtitle}>CUIDADOS PÓS-TATUAGEM</Text>
             </View>
@@ -160,11 +163,9 @@ const styles = StyleSheet.create({
   scroll: { flexGrow: 1, paddingHorizontal: 28, paddingVertical: 40, justifyContent: 'center' },
 
   logoContainer: { alignItems: 'center', marginBottom: 48 },
-  logoCircle: {
-    width: 80, height: 80, borderRadius: 40,
-    backgroundColor: 'rgba(255, 141, 140, 0.08)',
-    borderWidth: 1, borderColor: 'rgba(255, 141, 140, 0.2)',
-    justifyContent: 'center', alignItems: 'center', marginBottom: 16,
+  logoImage: {
+    width: 80, height: 80,
+    marginBottom: 16,
   },
   appName: { fontSize: 24, fontWeight: '800', color: '#fff', letterSpacing: 2 },
   appSubtitle: { fontSize: 12, color: '#adaaaa', marginTop: 6, letterSpacing: 1.5, fontWeight: '600' },
