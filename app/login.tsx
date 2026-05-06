@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Redirect } from 'expo-router';
+import * as Linking from 'expo-linking';
 import { useState } from 'react';
 import {
   ActivityIndicator,
@@ -50,6 +51,26 @@ export default function LoginScreen() {
     if (!result.success) {
       setErro(result.message || 'Email ou senha incorretos.');
     }
+  }
+
+  function handleCadastroWeb() {
+    // URL base do frontend Web (Altere caso o domínio final seja outro)
+    const WEB_URL = 'http://localhost:5173/cadastro'; // ou 'https://seusite.com/cadastro'
+    
+    // Cria uma URL de retorno dinâmica (funciona no Expo Go e em Produção)
+    const deepLinkUrl = Linking.createURL('/login');
+    
+    // Adiciona o parâmetro redirect para que a Web saiba para onde voltar
+    const fullUrl = `${WEB_URL}?redirect=${encodeURIComponent(deepLinkUrl)}`;
+
+    Alert.alert(
+      'Criar Conta',
+      'O cadastro é feito com segurança pelo nosso site. Vamos redirecioná-lo(a) para o portal.\n\nApós finalizar, você voltará automaticamente ao app.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Ir para o site', onPress: () => Linking.openURL(fullUrl) }
+      ]
+    );
   }
 
   return (
@@ -144,7 +165,7 @@ export default function LoginScreen() {
             {/* Rodapé */}
             <View style={styles.footer}>
               <Text style={styles.footerText}>Não tem conta? </Text>
-              <Pressable onPress={() => Alert.alert('Cadastro', 'O cadastro é feito através do site.\nApós criar a conta, use o mesmo email e senha aqui no app.')}>
+              <Pressable onPress={handleCadastroWeb}>
                 <Text style={styles.footerLink}>Cadastre-se</Text>
               </Pressable>
             </View>
