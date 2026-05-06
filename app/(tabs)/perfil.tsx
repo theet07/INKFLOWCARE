@@ -1,20 +1,23 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState, useEffect } from 'react';
 import {
-  Alert, Modal, Platform, Pressable, ScrollView, StyleSheet,
+  Alert, Appearance, Modal, Platform, Pressable, ScrollView, StyleSheet,
   Text, TextInput, TouchableOpacity, View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { useAuth } from '@/context/auth';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useBadges } from '@/hooks/useBadges';
 import { useCicatrizacao } from '@/hooks/useCicatrizacao';
 import { useEstatisticas } from '@/hooks/useEstatisticas';
 import api from '@/services/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const historicoInicial: any[] = [];
+const TEMA_KEY = '@inkflow:tema_escuro';
 
 export default function PerfilScreen() {
+  const router = useRouter();
   const { logout, user } = useAuth();
   const { badges, desbloqueadas, totalBadges } = useBadges(user?.id);
   const { cicatrizacao } = useCicatrizacao();
@@ -27,7 +30,18 @@ export default function PerfilScreen() {
   const { prefs: notifPrefs, toggleAtivas } = useNotifications(user?.id);
   const notificacoes = notifPrefs.ativas;
   const [temaEscuro, setTemaEscuro] = useState(true);
-  const [historico, setHistorico] = useState<any[]>(historicoInicial);
+  const [historico, setHistorico] = useState<any[]>([]);
+
+  useEffect(() => {
+    AsyncStorage.getItem(TEMA_KEY).then((val) => {
+      if (val !== null) setTemaEscuro(val === 'true');
+    });
+  }, []);
+
+  useEffect(() => {
+    Appearance.setColorScheme(temaEscuro ? 'dark' : 'light');
+    AsyncStorage.setItem(TEMA_KEY, String(temaEscuro));
+  }, [temaEscuro]);
 
   useEffect(() => {
     if (user) {
@@ -109,7 +123,7 @@ export default function PerfilScreen() {
       <SafeAreaView style={styles.safe}>
         {/* TopAppBar - matches HTML: h-16 bg-[#0e0e0e]/90 border-b border-white/5 */}
         <View style={styles.topBar}>
-          <TouchableOpacity style={styles.topBarBtn} activeOpacity={0.7}>
+          <TouchableOpacity style={styles.topBarBtn} onPress={() => router.push('/')} activeOpacity={0.7}>
             <Ionicons name="arrow-back" size={24} color="#e63946" />
           </TouchableOpacity>
           <Text style={styles.topBarTitle}>PERFIL</Text>

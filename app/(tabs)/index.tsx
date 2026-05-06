@@ -85,9 +85,11 @@ export default function HomeScreen() {
           </View>
           <TouchableOpacity style={styles.notifBtn} onPress={handleNotificacoes} activeOpacity={0.7}>
             <Ionicons name="notifications-outline" size={22} color="#adaaaa" />
-            <View style={styles.notifBadge}>
-              <Text style={styles.notifBadgeText}>3</Text>
-            </View>
+            {lembretesAtivos.filter((l) => !l.feito).length > 0 && (
+              <View style={styles.notifBadge}>
+                <Text style={styles.notifBadgeText}>{lembretesAtivos.filter((l) => !l.feito).length}</Text>
+              </View>
+            )}
           </TouchableOpacity>
         </View>
 
