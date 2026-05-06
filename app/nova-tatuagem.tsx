@@ -7,24 +7,51 @@ import {
   ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import api from '@/services/api';
+import { useAuth } from '@/context/auth';
 
 const locais = ['Braço', 'Perna', 'Costas', 'Peito', 'Pescoço', 'Mão', 'Pé', 'Outro'];
 
 export default function NovaTatuagemScreen() {
   const router = useRouter();
+  const { user } = useAuth();
   const [nome, setNome] = useState('');
   const [artista, setArtista] = useState('');
   const [local, setLocal] = useState('');
   const [tamanho, setTamanho] = useState('');
   const [obs, setObs] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  function handleSalvar() {
+  async function handleSalvar() {
     if (!nome.trim()) { Alert.alert('Atenção', 'Informe o nome da tatuagem.'); return; }
     if (!artista.trim()) { Alert.alert('Atenção', 'Informe o nome do artista.'); return; }
     if (!local) { Alert.alert('Atenção', 'Selecione o local da tatuagem.'); return; }
-    Alert.alert('Tatuagem adicionada!', `"${nome}" foi adicionada ao teu acompanhamento.`, [
-      { text: 'OK', onPress: () => router.back() },
-    ]);
+
+    // Parsear largura/altura do campo tamanho (ex: "15x10")
+    let largura: number | null = null;
+    let altura: number | null = null;
+    const match = tamanho.match(/(\d+(?:[.,]\d+)?)\s*[xX]\s*(\d+(?:[.,]\d+)?)/);
+    if (match) {
+      largura = parseFloat(match[1].replace(',', '.'));
+      altura = parseFloat(match[2].replace(',', '.'));
+    }
+
+    try {
+      setLoading(true);
+      await api.post('/cicatrizacao/criar', {
+        clienteId: user?.id,
+        regiao: local,
+        largura,
+        altura,
+      });
+      Alert.alert('Tatuagem adicionada!', `"${nome}" foi adicionada ao teu acompanhamento.`, [
+        { text: 'OK', onPress: () => router.back() },
+      ]);
+    } catch (err: any) {
+      Alert.alert('Erro', err.response?.data?.message || 'Não foi possível criar o acompanhamento.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -113,11 +140,12 @@ export default function NovaTatuagemScreen() {
             </View>
 
             <Pressable
-              style={({ pressed }) => [styles.salvarBtn, pressed && { opacity: 0.8 }]}
+              style={({ pressed }) => [styles.salvarBtn, (pressed || loading) && { opacity: 0.8 }]}
               onPress={handleSalvar}
+              disabled={loading}
             >
               <Ionicons name="checkmark-circle-outline" size={20} color="#fff" />
-              <Text style={styles.salvarBtnText}>Iniciar Acompanhamento</Text>
+              <Text style={styles.salvarBtnText}>{loading ? 'Criando...' : 'Iniciar Acompanhamento'}</Text>
             </Pressable>
 
           </ScrollView>

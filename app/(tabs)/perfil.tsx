@@ -10,12 +10,9 @@ import { useNotifications } from '@/hooks/useNotifications';
 import { useBadges } from '@/hooks/useBadges';
 import { useCicatrizacao } from '@/hooks/useCicatrizacao';
 import { useEstatisticas } from '@/hooks/useEstatisticas';
+import api from '@/services/api';
 
-const historicoInicial = [
-  { id: 1, nome: 'Dragão nas Costas', artista: 'Carlos Ink', data: '10/07/2025', status: 'em_cuidado' },
-  { id: 2, nome: 'Sleeve Japonês', artista: 'Carlos Ink', data: '15/03/2025', status: 'em_cuidado' },
-  { id: 3, nome: 'Borboleta no Pulso', artista: 'Ana Ink', data: '02/01/2025', status: 'concluida' },
-];
+const historicoInicial: any[] = [];
 
 export default function PerfilScreen() {
   const { logout, user } = useAuth();
@@ -30,7 +27,7 @@ export default function PerfilScreen() {
   const { prefs: notifPrefs, toggleAtivas } = useNotifications(user?.id);
   const notificacoes = notifPrefs.ativas;
   const [temaEscuro, setTemaEscuro] = useState(true);
-  const [historico] = useState(historicoInicial);
+  const [historico, setHistorico] = useState<any[]>(historicoInicial);
 
   useEffect(() => {
     if (user) {
@@ -39,19 +36,37 @@ export default function PerfilScreen() {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (user?.id) fetchHistorico();
+  }, [user?.id]);
+
+  async function fetchHistorico() {
+    try {
+      const response = await api.get(`/cicatrizacao/usuario/${user?.id}/historico`);
+      setHistorico(response.data || []);
+    } catch {
+      setHistorico([]);
+    }
+  }
+
   function abrirEditar() {
     setNomeEdit(nome);
     setEmailEdit(email);
     setModalVisivel(true);
   }
 
-  function salvarPerfil() {
+  async function salvarPerfil() {
     if (!nomeEdit.trim()) { Alert.alert('Atenção', 'O nome não pode estar vazio.'); return; }
     if (!/\S+@\S+\.\S+/.test(emailEdit)) { Alert.alert('Atenção', 'Email inválido.'); return; }
-    setNome(nomeEdit.trim());
-    setEmail(emailEdit.trim());
-    setModalVisivel(false);
-    Alert.alert('Perfil atualizado!', 'As tuas informações foram salvas.');
+    try {
+      await api.put(`/clientes/${user?.id}`, { fullName: nomeEdit.trim(), telefone: user?.telefone });
+      setNome(nomeEdit.trim());
+      setEmail(emailEdit.trim());
+      setModalVisivel(false);
+      Alert.alert('Perfil atualizado!', 'As tuas informações foram salvas.');
+    } catch (err: any) {
+      Alert.alert('Erro', err.response?.data?.message || 'Não foi possível salvar.');
+    }
   }
 
   function handlePrivacidade() {
@@ -86,8 +101,8 @@ export default function PerfilScreen() {
     }
   }
 
-  const emCuidado = historico.filter((t) => t.status === 'em_cuidado').length;
-  const concluidas = historico.filter((t) => t.status === 'concluida').length;
+  const emCuidado = historico.filter((t) => t.status === 'ATIVA').length;
+  const concluidas = historico.filter((t) => t.status === 'CONCLUIDA').length;
 
   return (
     <View style={styles.container}>
@@ -136,21 +151,23 @@ export default function PerfilScreen() {
           {/* Minhas tatuagens - matches HTML tattoo cards */}
           <Text style={styles.sectionTitle}>Minhas tatuagens</Text>
           <View style={styles.tatuagensContainer}>
-            {historico.map((t) => (
+            {historico.length === 0 ? (
+              <Text style={{ color: '#666', fontSize: 13, textAlign: 'center', paddingVertical: 16 }}>Nenhuma tatuagem registrada.</Text>
+            ) : historico.map((t) => (
               <TouchableOpacity key={t.id} style={styles.tatuagemCard} activeOpacity={0.7}>
                 <View style={styles.tatuagemInfo}>
-                  <Text style={styles.tatuagemNome}>{t.nome}</Text>
-                  <Text style={styles.tatuagemSub}>{t.artista} · {t.data}</Text>
+                  <Text style={styles.tatuagemNome}>{t.agendamento?.regiao || 'Tatuagem'}</Text>
+                  <Text style={styles.tatuagemSub}>{t.agendamento?.artista?.nome || 'Artista'} · {t.dataInicio ? new Date(t.dataInicio).toLocaleDateString('pt-BR') : ''}</Text>
                 </View>
                 <View style={[
                   styles.statusBadge,
-                  t.status === 'em_cuidado' ? styles.statusAtivo : styles.statusConcluido
+                  t.status === 'ATIVA' ? styles.statusAtivo : styles.statusConcluido
                 ]}>
                   <Text style={[
                     styles.statusText,
-                    t.status === 'em_cuidado' ? styles.statusAtivoText : styles.statusConcluidoText
+                    t.status === 'ATIVA' ? styles.statusAtivoText : styles.statusConcluidoText
                   ]}>
-                    {t.status === 'em_cuidado' ? 'ATIVO' : 'CONCLUÍDO'}
+                    {t.status === 'ATIVA' ? 'ATIVO' : 'CONCLUÍDO'}
                   </Text>
                 </View>
               </TouchableOpacity>
