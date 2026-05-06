@@ -78,7 +78,7 @@ export default function HomeScreen() {
             <View>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                 <Text style={styles.greeting}>Olá, {user?.fullName || user?.nome || 'Usuário'}</Text>
-                <Ionicons name="sparkles" size={18} color="#FFD700" />
+                <Ionicons name="water-outline" size={18} color="#ff8d8c" />
               </View>
               <Text style={styles.headerSub}>Veja o progresso da sua tatuagem</Text>
             </View>
