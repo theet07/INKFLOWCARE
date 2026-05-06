@@ -14,15 +14,12 @@ const coresFase: Record<string, string> = {
   FASE_4_PROFUNDA: '#22c55e',
 };
 
-// Mock data para visualização — igual à referência HTML
-const MOCK_CAMINHO = [
-  { id: 'm1', numeroDia: '1-3', statusDia: 'COMPLETO', estrelas: 3, xpGanho: 50, fase: 'FASE_1_PRIMEIRAS_24H' },
-  { id: 'm2', numeroDia: '4-7', statusDia: 'COMPLETO', estrelas: 3, xpGanho: 100, fase: 'FASE_2_INICIAL' },
-  { id: 'm3', numeroDia: '8-14', statusDia: 'COMPLETO', estrelas: 3, xpGanho: 150, fase: 'FASE_2_INICIAL' },
-  { id: 'm4', numeroDia: '18', statusDia: 'DISPONIVEL', estrelas: 0, xpGanho: 200, fase: 'FASE_3_DESCAMACAO', titulo: 'Hidratação & Limpeza' },
-  { id: 'm5', numeroDia: '19', statusDia: 'BLOQUEADO', estrelas: 0, xpGanho: 250, fase: 'FASE_3_DESCAMACAO', titulo: 'Avaliação da Pele' },
-  { id: 'm6', numeroDia: '20', statusDia: 'BLOQUEADO', estrelas: 0, xpGanho: 300, fase: 'FASE_3_DESCAMACAO', titulo: 'Hidratação' },
-];
+const faseNomes: Record<string, string> = {
+  FASE_1_PRIMEIRAS_24H: 'Primeiras 24h',
+  FASE_2_INICIAL: 'Cura Inicial',
+  FASE_3_DESCAMACAO: 'Descamação',
+  FASE_4_PROFUNDA: 'Cura Profunda',
+};
 
 export default function CaminhoScreen() {
   const router = useRouter();
@@ -30,14 +27,13 @@ export default function CaminhoScreen() {
   const { caminho, loading: caminhoLoading } = useCaminho(cicatrizacao?.id || null);
 
   const loading = cicLoading || caminhoLoading;
-  
-  // Usa dados reais se disponíveis, senão usa mock
-  const caminhoAtivo = caminho.length > 0 ? caminho : MOCK_CAMINHO;
-  const usandoMock = caminho.length === 0;
-  
-  const diasCompletos = usandoMock ? 3 : caminho.filter(c => c.statusDia === 'COMPLETO').length;
+  const semCicatrizacao = !cicatrizacao && !cicLoading;
+
+  const diasCompletos = caminho.filter(c => c.statusDia === 'COMPLETO').length;
   const totalDias = cicatrizacao?.periodoTotalDias || 30;
-  const progresso = usandoMock ? 60 : (totalDias > 0 ? (diasCompletos / totalDias) * 100 : 0);
+  const diaAtual = cicatrizacao?.diaAtual || 0;
+  const progresso = totalDias > 0 ? Math.round((diaAtual / totalDias) * 100) : 0;
+  const faseAtual = cicatrizacao?.faseAtual ? (faseNomes[cicatrizacao.faseAtual] || 'Em progresso') : '';
 
   function handleNodePress(checkpoint: any) {
     const { statusDia, numeroDia } = checkpoint;
@@ -55,21 +51,19 @@ export default function CaminhoScreen() {
       return;
     }
 
-    if (!usandoMock) {
-      router.push(`/dia/${numeroDia}` as any);
-    }
+    router.push(`/dia/${numeroDia}` as any);
   }
 
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.safe} edges={['top']}>
 
-        {/* Header - fixed top bar */}
+        {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={24} color="#adaaaa" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>RECOVERY PROGRESS</Text>
+          <Text style={styles.headerTitle}>PROGRESSO DA CURA</Text>
           <View style={{ width: 24 }} />
         </View>
 
@@ -78,51 +72,70 @@ export default function CaminhoScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Status Card */}
-          <View style={styles.progressCard}>
-            <View style={styles.progressCardGlow} />
-            <View style={styles.progressHeader}>
-              <View>
-                <Text style={styles.progressLabel}>STATUS GERAL</Text>
-                <Text style={styles.progressTitle}>
-                  Fase 2: <Text style={styles.progressTitleAccent}>Cura</Text>
-                </Text>
-              </View>
-              <View style={styles.progressDays}>
-                <Text style={styles.progressDaysNumber}>{usandoMock ? 18 : diasCompletos}</Text>
-                <Text style={styles.progressDaysTotal}>/{totalDias} dias</Text>
-              </View>
-            </View>
-            <View style={styles.progressBarContainer}>
-              <LinearGradient
-                colors={['#ff8d8c', '#ff7072']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={[styles.progressBarFill, { width: `${progresso}%` }]}
-              />
-            </View>
-          </View>
-
-          <Text style={styles.journeyTitle}>SUA JORNADA</Text>
-
-          {/* Journey Map */}
           {loading ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color="#ff8d8c" />
               <Text style={styles.loadingText}>Carregando caminho...</Text>
             </View>
-          ) : (
-            <View style={styles.pathContainer}>
-              {caminhoAtivo.map((checkpoint, index) => (
-                <NodeItem
-                  key={checkpoint.id}
-                  checkpoint={checkpoint}
-                  index={index}
-                  onPress={() => handleNodePress(checkpoint)}
-                  isCurrentDay={checkpoint.statusDia === 'DISPONIVEL'}
-                />
-              ))}
+          ) : semCicatrizacao ? (
+            /* Empty state — sem cicatrização ativa */
+            <View style={styles.emptyContainer}>
+              <Ionicons name="bandage-outline" size={64} color="#555" />
+              <Text style={styles.emptyTitle}>Sem cicatrização ativa</Text>
+              <Text style={styles.emptySubtitle}>
+                Quando você iniciar uma cicatrização, seu caminho de cura vai aparecer aqui com todas as etapas do processo.
+              </Text>
             </View>
+          ) : (
+            <>
+              {/* Status Card */}
+              <View style={styles.progressCard}>
+                <View style={styles.progressCardGlow} />
+                <View style={styles.progressHeader}>
+                  <View>
+                    <Text style={styles.progressLabel}>STATUS GERAL</Text>
+                    <Text style={styles.progressTitle}>
+                      <Text style={styles.progressTitleAccent}>{faseAtual}</Text>
+                    </Text>
+                  </View>
+                  <View style={styles.progressDays}>
+                    <Text style={styles.progressDaysNumber}>{diaAtual}</Text>
+                    <Text style={styles.progressDaysTotal}>/{totalDias} dias</Text>
+                  </View>
+                </View>
+                <View style={styles.progressBarContainer}>
+                  <LinearGradient
+                    colors={['#ff8d8c', '#ff7072']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={[styles.progressBarFill, { width: `${progresso}%` }]}
+                  />
+                </View>
+              </View>
+
+              <Text style={styles.journeyTitle}>SUA JORNADA</Text>
+
+              {/* Journey Map */}
+              {caminho.length === 0 ? (
+                <View style={styles.emptyContainer}>
+                  <Ionicons name="map-outline" size={48} color="#555" />
+                  <Text style={styles.emptyTitle}>Caminho ainda não disponível</Text>
+                  <Text style={styles.emptySubtitle}>Complete o primeiro dia para ver seu progresso.</Text>
+                </View>
+              ) : (
+                <View style={styles.pathContainer}>
+                  {caminho.map((checkpoint, index) => (
+                    <NodeItem
+                      key={checkpoint.id}
+                      checkpoint={checkpoint}
+                      index={index}
+                      onPress={() => handleNodePress(checkpoint)}
+                      isCurrentDay={checkpoint.statusDia === 'DISPONIVEL'}
+                    />
+                  ))}
+                </View>
+              )}
+            </>
           )}
         </ScrollView>
       </SafeAreaView>
@@ -247,7 +260,7 @@ function NodeItem({ checkpoint, index, onPress, isCurrentDay }: any) {
           )}
           {statusDia === 'DISPONIVEL' && (
             <>
-              <Text style={styles.nodeTitle}>Hidratação & Limpeza</Text>
+              <Text style={styles.nodeTitle}>Cuidados do dia</Text>
               <Text style={styles.nodeSubtitle}>Toque para iniciar</Text>
             </>
           )}
@@ -261,7 +274,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0e0e0e' },
   safe: { flex: 1 },
 
-  // Header: fixed top, bg transparent with blur simulation
+  // Header
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -273,7 +286,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(14,14,14,0.9)',
   },
   backBtn: { width: 24, height: 24, justifyContent: 'center', alignItems: 'center' },
-  // font-['Epilogue'] font-bold tracking-tighter uppercase text-xl text-[#ff8d8c]
   headerTitle: {
     fontSize: 20,
     fontWeight: '700',
@@ -285,7 +297,7 @@ const styles = StyleSheet.create({
   scrollView: { flex: 1 },
   scrollContent: { paddingHorizontal: 16, paddingBottom: 120 },
 
-  // Status Card: bg-surface-container-highest p-6 rounded-lg glass-panel
+  // Status Card
   progressCard: {
     marginTop: 16,
     marginBottom: 24,
@@ -310,7 +322,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     zIndex: 10,
   },
-  // font-label text-sm text-on-surface-variant uppercase tracking-wider
   progressLabel: {
     fontSize: 14,
     color: '#adaaaa',
@@ -319,7 +330,6 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     marginBottom: 4,
   },
-  // font-headline text-3xl font-extrabold
   progressTitle: {
     fontSize: 28,
     fontWeight: '900',
@@ -328,11 +338,8 @@ const styles = StyleSheet.create({
   },
   progressTitleAccent: { color: '#ff8d8c' },
   progressDays: { alignItems: 'flex-end' },
-  // font-headline text-2xl font-bold text-primary
   progressDaysNumber: { fontSize: 28, fontWeight: '700', color: '#ff8d8c' },
-  // font-label text-sm text-on-surface-variant
   progressDaysTotal: { fontSize: 13, color: '#adaaaa' },
-  // h-2 bg-surface-container-low rounded-full
   progressBarContainer: {
     height: 8,
     backgroundColor: '#131313',
@@ -345,7 +352,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
 
-  // font-headline text-xl font-bold uppercase
   journeyTitle: {
     fontSize: 20,
     fontWeight: '700',
@@ -368,7 +374,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 60,
+    paddingVertical: 80,
     paddingHorizontal: 32,
   },
   emptyTitle: {
@@ -382,6 +388,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 8,
     textAlign: 'center',
+    lineHeight: 20,
   },
 
   pathContainer: { paddingVertical: 32 },
@@ -399,7 +406,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
 
-  // HOJE badge: bg-surface-container-highest px-3 py-1 rounded-sm border
+  // HOJE badge
   hojeBadge: {
     position: 'absolute',
     top: -32,
@@ -411,7 +418,6 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.1)',
     zIndex: 20,
   },
-  // font-headline text-xs font-bold text-warning tracking-widest uppercase
   hojeText: {
     fontSize: 10,
     fontWeight: '700',
@@ -420,7 +426,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
 
-  // Circle: 60px, border 3px
+  // Circle node
   nodeCircle: {
     width: 60,
     height: 60,
@@ -434,7 +440,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
     alignItems: 'center',
   },
-  // font-label text-xs text-on-surface-variant uppercase font-bold tracking-widest
   nodeDia: {
     fontSize: 11,
     color: '#adaaaa',
@@ -448,19 +453,16 @@ const styles = StyleSheet.create({
     gap: 4,
     marginTop: 4,
   },
-  // font-label text-xs font-bold
   nodeXp: {
     fontSize: 12,
     fontWeight: '700',
   },
-  // font-headline text-sm text-on-surface font-bold
   nodeTitle: {
     fontSize: 14,
     fontWeight: '700',
     color: '#fff',
     marginTop: 4,
   },
-  // font-label text-xs text-on-surface-variant
   nodeSubtitle: {
     fontSize: 12,
     color: '#adaaaa',
