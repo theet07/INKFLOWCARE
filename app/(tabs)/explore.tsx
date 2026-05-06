@@ -130,7 +130,7 @@ const fases = [
         'Hidrate antes de dormir',
         'Observe se a cicatrização está uniforme',
         'Consulte o artista se notar algo estranho',
-        'Comemore — está quase curada! 🎉',
+        'Comemore — está quase curada!',
       ],
     },
     cuidados: [
@@ -160,7 +160,8 @@ const faq = [
 ];
 
 const periodos = ['manha', 'tarde', 'noite'] as const;
-const periodoLabel = { manha: '🌅 Manhã', tarde: '☀️ Tarde', noite: '🌙 Noite' };
+const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
+const periodoIcon = { manha: 'partly-sunny-outline', tarde: 'sunny-outline', noite: 'moon-outline' } as const;
 
 export default function CuidadosScreen() {
   const [faseAberta, setFaseAberta] = useState<number | null>(1);
@@ -173,7 +174,7 @@ export default function CuidadosScreen() {
   }
 
   function handleAlerta(texto: string) {
-    Alert.alert('⚠️ Sinal de alerta', `${texto}\n\nSe notar este sintoma, procure um médico ou dermatologista imediatamente.`, [{ text: 'Entendido' }]);
+    Alert.alert('Sinal de alerta', `${texto}\n\nSe notar este sintoma, procure um médico ou dermatologista imediatamente.`, [{ text: 'Entendido' }]);
   }
 
   return (
@@ -223,15 +224,21 @@ export default function CuidadosScreen() {
                         onPress={() => setPeriodoAtivo(p)}
                         activeOpacity={0.7}
                       >
-                        <Text style={[styles.periodoBtnText, periodoAtivo === p && styles.periodoBtnTextAtivo]}>
-                          {periodoLabel[p]}
-                        </Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                          <Ionicons name={periodoIcon[p]} size={14} color={periodoAtivo === p ? '#ff8d8c' : '#666'} />
+                          <Text style={[styles.periodoBtnText, periodoAtivo === p && styles.periodoBtnTextAtivo]}>
+                            {periodoLabel[p]}
+                          </Text>
+                        </View>
                       </TouchableOpacity>
                     ))}
                   </View>
 
                   {/* Checklist do período */}
-                  <Text style={styles.checklistTitulo}>Checklist — {periodoLabel[periodoAtivo]}</Text>
+                  <View style={styles.checklistTituloRow}>
+                    <Ionicons name={periodoIcon[periodoAtivo]} size={14} color="#999" />
+                    <Text style={[styles.checklistTitulo, { marginBottom: 0 }]}>CHECKLIST — {periodoLabel[periodoAtivo]}</Text>
+                  </View>
                   {fase.rotina[periodoAtivo].map((item, i) => {
                     const key = `${fase.id}-${periodoAtivo}-${i}`;
                     const feito = !!checklistFeito[key];
@@ -255,7 +262,10 @@ export default function CuidadosScreen() {
                   })}
 
                   {/* Cuidados gerais da fase */}
-                  <Text style={[styles.checklistTitulo, { marginTop: 16 }]}>⚠️ Evitar nesta fase</Text>
+                  <View style={[styles.checklistTituloRow, { marginTop: 16 }]}>
+                    <Ionicons name="warning-outline" size={14} color="#999" />
+                    <Text style={[styles.checklistTitulo, { marginBottom: 0 }]}>EVITAR NESTA FASE</Text>
+                  </View>
                   {fase.cuidados.map((c, i) => (
                     <View key={i} style={styles.cuidadoItem}>
                       <View style={[styles.cuidadoBullet, { backgroundColor: fase.cor }]} />
@@ -268,7 +278,10 @@ export default function CuidadosScreen() {
           ))}
 
           {/* Sinais de alerta */}
-          <Text style={styles.sectionTitle}>⚠️ Sinais de alerta</Text>
+          <View style={styles.sectionTitleRow}>
+            <Ionicons name="warning-outline" size={22} color="#fff" />
+            <Text style={styles.sectionTitleText}>Sinais de alerta</Text>
+          </View>
           <Text style={styles.alertaIntro}>Toque para saber mais sobre cada sinal:</Text>
           {alertas.map((a, i) => (
             <TouchableOpacity
@@ -284,7 +297,10 @@ export default function CuidadosScreen() {
           ))}
 
           {/* Produtos recomendados */}
-          <Text style={styles.sectionTitle}>🧴 Produtos recomendados</Text>
+          <View style={styles.sectionTitleRow}>
+            <Ionicons name="flask-outline" size={22} color="#fff" />
+            <Text style={styles.sectionTitleText}>Produtos recomendados</Text>
+          </View>
           <View style={styles.produtosCard}>
             {[
               { nome: 'Bepantol Derma', uso: 'Pomada cicatrizante — fases 1 e 2' },
@@ -304,7 +320,10 @@ export default function CuidadosScreen() {
           </View>
 
           {/* FAQ */}
-          <Text style={styles.sectionTitle}>❓ Perguntas frequentes</Text>
+          <View style={styles.sectionTitleRow}>
+            <Ionicons name="help-circle-outline" size={22} color="#fff" />
+            <Text style={styles.sectionTitleText}>Perguntas frequentes</Text>
+          </View>
           {faq.map((f, i) => (
             <View key={i} style={styles.faqCard}>
               <TouchableOpacity
@@ -388,7 +407,8 @@ const styles = StyleSheet.create({
   periodoBtnTextAtivo: { color: '#ff8d8c' },
 
   // Checklist
-  checklistTitulo: { fontSize: 12, color: '#999', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 },
+  checklistTituloRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 10 },
+  checklistTitulo: { fontSize: 12, color: '#999', textTransform: 'uppercase', letterSpacing: 0.8 },
   checkItem: {
     flexDirection: 'row', alignItems: 'flex-start', gap: 12,
     backgroundColor: 'rgba(255,255,255,0.03)',
@@ -416,7 +436,8 @@ const styles = StyleSheet.create({
   cuidadoTexto: { fontSize: 13, color: '#ddd', flex: 1, lineHeight: 20 },
 
   // Sections
-  sectionTitle: { fontSize: 18, fontWeight: '700', color: '#fff', marginTop: 28, marginBottom: 12 },
+  sectionTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 28, marginBottom: 12 },
+  sectionTitleText: { fontSize: 18, fontWeight: '700', color: '#fff' },
 
   // Alertas
   alertaIntro: { fontSize: 13, color: '#999', marginBottom: 10 },
