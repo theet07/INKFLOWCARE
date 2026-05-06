@@ -63,12 +63,23 @@ export default function HomeScreen() {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerLeft}>
-            <Image
-              source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDFFvcOtsX7DWP0DOGXfuQL31wg_9F3UTF--4--JgXRnyfsxJAdzzJOasBpifHKxWIUUd8KOUOh_ryE78YnwQHqSul5LlEkGuLYw24le-G7OMlvTocMur1QFil3pRR9vJl4cYwOOrngtxGFxGbmsrgaVfpsgR-JBs8RZMOSulHORUZfo65yaBkvboEPjMuAtfxHNe83y1n3_BHZZVbneqMjjkvsI_xedg3JQkWJrlBB6LrgKJrtVKbI3yG65oY7YmIrh3Xh-A7F-cc' }}
-              style={styles.headerAvatar}
-            />
+            {user?.profileImage ? (
+              <Image
+                source={{ uri: user.profileImage }}
+                style={styles.headerAvatar}
+              />
+            ) : (
+              <View style={[styles.headerAvatar, styles.headerAvatarFallback]}>
+                <Text style={styles.headerAvatarLetter}>
+                  {(user?.fullName || user?.nome || 'U')[0].toUpperCase()}
+                </Text>
+              </View>
+            )}
             <View>
-              <Text style={styles.greeting}>Olá, {user?.nome || 'Matheus'} 👋</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Text style={styles.greeting}>Olá, {user?.fullName || user?.nome || 'Usuário'}</Text>
+                <Ionicons name="sparkles" size={18} color="#FFD700" />
+              </View>
               <Text style={styles.headerSub}>Veja o progresso da sua tatuagem</Text>
             </View>
           </View>
@@ -211,8 +222,15 @@ const styles = StyleSheet.create({
   },
   headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   headerAvatar: {
-    width: 44, height: 44, borderRadius: 8,
+    width: 44, height: 44, borderRadius: 22,
     backgroundColor: '#262626',
+  },
+  headerAvatarFallback: {
+    justifyContent: 'center', alignItems: 'center',
+    backgroundColor: '#FF4757',
+  },
+  headerAvatarLetter: {
+    fontSize: 18, fontWeight: '700', color: '#fff',
   },
   greeting: { fontSize: 20, fontWeight: '700', color: '#fff' },
   headerSub: { fontSize: 14, color: '#adaaaa', marginTop: 2 },

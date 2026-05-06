@@ -261,7 +261,7 @@ export default function DiaScreen() {
             {temQuiz && (
               <TouchableOpacity
                 style={styles.actionBtn}
-                onPress={() => router.push(`/quiz/${numeroDia}`)}
+                onPress={() => router.push(`/quiz/${numeroDia}` as any)}
               >
                 <Ionicons name="school-outline" size={20} color="#FFD700" />
                 <Text style={styles.actionBtnText}>Quiz do Dia</Text>
