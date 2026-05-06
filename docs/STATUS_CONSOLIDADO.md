@@ -210,8 +210,11 @@
 2. ✅ 28 dicas populadas (confirmado via API)
 3. ✅ 15 perguntas de quiz + 60 opções (confirmado via API)
 
-### 🔜 Sprint 6: Notificações — PRÓXIMO
-1. Implementar notificações locais reais com `expo-notifications`
+### ✅ Sprint 6: Notificações — CONCLUÍDO
+1. ✅ Permissão solicitada com `requestPermissionsAsync`
+2. ✅ 3 notificações diárias agendadas com trigger `DAILY`
+3. ✅ Cancelar e reagendar ao alterar preferências
+4. ✅ No-op na web
 
 ---
 

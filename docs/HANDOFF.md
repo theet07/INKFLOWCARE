@@ -117,6 +117,14 @@ INKFLOWCARE/             ← App Mobile (React Native)
 | 15 perguntas de quiz | ✅ Confirmado via API |
 | 60 opções de quiz | ✅ Confirmado via API |
 
+### Sprint 6 — Notificações Locais (CONCLUÍDO)
+| O que | Arquivo | Resultado |
+|-------|---------|-----------|
+| Permissão com `requestPermissionsAsync` | `hooks/useNotifications.ts` | Aplicado ✅ |
+| Agendamento diário com `DAILY` trigger | `hooks/useNotifications.ts` | Aplicado ✅ |
+| Cancelar e reagendar ao alterar preferências | `hooks/useNotifications.ts` | Aplicado ✅ |
+| No-op na web | `hooks/useNotifications.ts` | Aplicado ✅ |
+
 ### Documentação Consolidada
 - Deletados 3 arquivos desatualizados (STATUS_BACKEND_REAL, RELATORIO_PENDENCIAS, RESUMO_EXECUTIVO)
 - Criado `STATUS_CONSOLIDADO.md` com status real
@@ -126,17 +134,15 @@ INKFLOWCARE/             ← App Mobile (React Native)
 
 ---
 
-## 🔜 PRÓXIMA TAREFA — Sprint 6: Mobile (Notificações)
+## 🔜 PRÓXIMA TAREFA — Sem sprints críticos pendentes
 
-### Tarefa 6.1 — Notificações reais com expo-notifications
-**Arquivo**: `hooks/useNotifications.ts`
+Todos os sprints planejados foram concluídos. O projeto está estável.
 
-**Problema atual**: O hook salva preferências mas não agenda notificações reais no dispositivo.
-
-**Solução**:
-1. Solicitar permissão com `expo-notifications`
-2. Agendar notificações locais nos horários salvos (manhã, tarde, noite)
-3. Cancelar e reagendar ao alterar preferências
+### Melhorias opcionais para sessões futuras
+- Badge de notificações dinâmico no dashboard (atualmente fixo em "3")
+- Toggle de tema escuro funcional
+- Botão voltar no perfil funcional
+- Paginação em fotos (`GET /fotos/cicatrizacao/{id}`)
 
 ---
 
@@ -169,9 +175,12 @@ Todos os endpoints críticos foram implementados. Nenhum pendente.
 
 ## 📱 PROBLEMAS NO MOBILE
 
-| Problema | Arquivo | Descrição |
-|----------|---------|-----------|
-| Notificações não funcionam | `hooks/useNotifications.ts` | Não usa expo-notifications, não agenda notificações reais |
+Nenhum problema crítico pendente.
+
+### Melhorias menores (não bloqueantes)
+- Badge de notificações fixo em "3" no dashboard
+- Botão voltar no perfil não funciona
+- Toggle de tema escuro não faz nada
 
 ### Bugs Conhecidos do Mobile (não regredir)
 1. `AsyncStorage.multiRemove` não existe na v3+ → usar `removeItem` individual
@@ -222,8 +231,12 @@ Sprint 4 (CONCLUÍDO) ✅
   └── GET /api/cicatrizacao/usuario/{id}/historico
   └── Integração mobile: nova-tatuagem, perfil, histórico
 
-Sprint 6 (próximo)
-  └── Notificações reais com expo-notifications
+Sprint 5 (CONCLUÍDO) ✅
+  └── Seed data executado e confirmado
+  └── Documentação consolidada e atualizada
+
+Sprint 6 (CONCLUÍDO) ✅
+  └── Notificações locais reais com expo-notifications
 ```
 
 ---
@@ -243,21 +256,19 @@ Leia os arquivos abaixo sequencialmente antes de escrever qualquer código:
 6. INKFLOWCARE/docs/GUIA_RAPIDO.md                      ← tabela de endpoints e como testar
 ```
 
-### Passo 2 — Leitura dos Arquivos Alvo do Sprint 6
-
-Depois de ler a documentação, leia os arquivos que serão modificados:
+### Passo 2 — Leitura dos Arquivos Relevantes
 
 ```
-7. INKFLOWCARE/hooks/useNotifications.ts
-8. INKFLOWCARE/app/(tabs)/perfil.tsx
-9. INKFLOWCARE/package.json
+7. INKFLOWBACKEND/src/main/java/com/backend/INKFLOW/service/CicatrizacaoService.java
+8. INKFLOWBACKEND/src/main/java/com/backend/INKFLOW/controller/CicatrizacaoController.java
+9. INKFLOWCARE/hooks/useNotifications.ts
+10. INKFLOWCARE/app/(tabs)/perfil.tsx
+11. INKFLOWCARE/app/nova-tatuagem.tsx
 ```
 
-### Passo 3 — Executar
+### Passo 3 — Estado Atual
 
-Após leitura completa, a próxima tarefa é:
-
-**Sprint 6**: Implementar notificações locais reais com `expo-notifications` em `useNotifications.ts`
+Todos os sprints planejados estão concluídos. Consulte a seção **Melhorias opcionais** acima para próximos passos.
 
 ---
 
