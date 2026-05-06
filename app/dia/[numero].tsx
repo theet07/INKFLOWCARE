@@ -1,9 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useState, useEffect } from 'react';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useCicatrizacao } from '@/hooks/useCicatrizacao';
 import { useChecklist } from '@/hooks/useChecklist';
+import { useFotos } from '@/hooks/useFotos';
+import api from '@/services/api';
 
 const periodoNomes: Record<string, string> = {
   MANHA: 'Manhã',
@@ -73,6 +76,15 @@ export default function DiaScreen() {
     cicatrizacao?.id || null,
     numeroDia
   );
+  const { pickAndUpload, uploading } = useFotos(cicatrizacao?.id);
+
+  // Dicas do backend
+  const [dicasBackend, setDicasBackend] = useState<{titulo: string; descricao: string; icone: string}[]>([]);
+  useEffect(() => {
+    api.get(`/dicas/dia/${numeroDia}`)
+      .then(res => { if (res.data?.length > 0) setDicasBackend(res.data); })
+      .catch(() => {});
+  }, [numeroDia]);
 
   const loading = cicLoading || checklistLoading;
   const usandoMock = checklist.length === 0 && !loading;
@@ -93,11 +105,17 @@ export default function DiaScreen() {
   const itensConcluidos = allItems.filter((item: any) => item.concluido).length;
   const progresso = totalItens > 0 ? (itensConcluidos / totalItens) * 100 : 0;
 
-  // Determinar fase e XP/estrelas mockados
+  // Determinar fase — usar backend ou fallback
   const faseAtual = cicatrizacao?.faseAtual || 'FASE_3_DESCAMACAO';
-  const dicas = dicasPorFase[faseAtual] || dicasPorFase.FASE_3_DESCAMACAO;
+  const dicasFallback = dicasPorFase[faseAtual] || dicasPorFase.FASE_3_DESCAMACAO;
+  // Preferir dicas do backend, fallback para hardcoded
+  const dicas = dicasBackend.length > 0
+    ? dicasBackend.map(d => ({ icone: d.icone || 'information-circle-outline', cor: '#3B82F6', texto: d.descricao }))
+    : dicasFallback;
 
-  // Mock: XP e estrelas baseado no progresso
+  const temQuiz = [7, 14, 21, 28].includes(numeroDia);
+
+  // XP e estrelas baseado no progresso
   const estrelas = progresso >= 100 ? 3 : progresso >= 50 ? 2 : progresso > 0 ? 1 : 0;
   const xpGanho = Math.round(progresso * 2);
 
@@ -249,6 +267,30 @@ export default function DiaScreen() {
                 </View>
               ))}
             </View>
+          </View>
+
+          {/* Ações */}
+          <View style={styles.actionsRow}>
+            {temQuiz && (
+              <TouchableOpacity
+                style={styles.actionBtn}
+                onPress={() => router.push(`/quiz/${numeroDia}`)}
+              >
+                <Ionicons name="school-outline" size={20} color="#FFD700" />
+                <Text style={styles.actionBtnText}>Quiz do Dia</Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              style={[styles.actionBtn, uploading && { opacity: 0.5 }]}
+              disabled={uploading}
+              onPress={async () => {
+                const ok = await pickAndUpload(numeroDia, `Dia ${numeroDia}`);
+                if (ok) Alert.alert('Foto salva!', 'Sua foto de evolução foi registrada.');
+              }}
+            >
+              <Ionicons name="camera-outline" size={20} color="#3B82F6" />
+              <Text style={styles.actionBtnText}>{uploading ? 'Enviando...' : 'Adicionar Foto'}</Text>
+            </TouchableOpacity>
           </View>
 
         </ScrollView>
@@ -435,4 +477,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center', alignItems: 'center',
   },
   dicaText: { flex: 1, fontSize: 14, color: '#ddd', lineHeight: 20 },
+
+  // Actions
+  actionsRow: {
+    flexDirection: 'row', gap: 12, marginTop: 8, marginBottom: 32,
+  },
+  actionBtn: {
+    flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: 8, backgroundColor: '#1E1E1E', borderRadius: 12, paddingVertical: 14,
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
+  },
+  actionBtnText: { fontSize: 14, fontWeight: '600', color: '#fff' },
 });

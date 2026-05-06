@@ -8,6 +8,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/context/auth';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useBadges } from '@/hooks/useBadges';
+import { useCicatrizacao } from '@/hooks/useCicatrizacao';
+import { useEstatisticas } from '@/hooks/useEstatisticas';
 
 const historicoInicial = [
   { id: 1, nome: 'Dragão nas Costas', artista: 'Carlos Ink', data: '10/07/2025', status: 'em_cuidado' },
@@ -18,6 +20,8 @@ const historicoInicial = [
 export default function PerfilScreen() {
   const { logout, user } = useAuth();
   const { badges, desbloqueadas, totalBadges } = useBadges(user?.id);
+  const { cicatrizacao } = useCicatrizacao();
+  const { stats, xpTotal } = useEstatisticas(cicatrizacao?.id);
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [nomeEdit, setNomeEdit] = useState('');
@@ -111,21 +115,21 @@ export default function PerfilScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Stats Card - matches HTML: bg-surface-container-highest rounded-xl p-6 */}
+          {/* Stats Card */}
           <View style={styles.statsCard}>
             <View style={styles.statItem}>
-              <Text style={styles.statNum}>{historico.length}</Text>
-              <Text style={styles.statLabel}>TATUAGENS</Text>
+              <Text style={styles.statNum}>{xpTotal}</Text>
+              <Text style={styles.statLabel}>XP TOTAL</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
-              <Text style={[styles.statNum, { color: '#FF4757' }]}>{emCuidado}</Text>
-              <Text style={styles.statLabel}>EM CUIDADO</Text>
+              <Text style={[styles.statNum, { color: '#FF4757' }]}>{stats.streakAtual}</Text>
+              <Text style={styles.statLabel}>STREAK</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
-              <Text style={[styles.statNum, { color: '#22c55e' }]}>{concluidas}</Text>
-              <Text style={styles.statLabel}>CONCLUÍDAS</Text>
+              <Text style={[styles.statNum, { color: '#22c55e' }]}>{stats.taxaConclusao}%</Text>
+              <Text style={styles.statLabel}>CONCLUSÃO</Text>
             </View>
           </View>
 
