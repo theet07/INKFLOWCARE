@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Redirect } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -53,30 +52,30 @@ export default function LoginScreen() {
   }
 
   return (
-    <LinearGradient colors={['#000000', '#0a0a2e', '#0d1b4b']} style={styles.gradient}>
+    <View style={styles.container}>
       <SafeAreaView style={styles.safe}>
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.flex}>
-          <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+          <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
 
             {/* Logo */}
             <View style={styles.logoContainer}>
               <View style={styles.logoCircle}>
-                <Ionicons name="color-palette" size={40} color="#FF0000" />
+                <Ionicons name="color-fill-outline" size={38} color="#ff8d8c" />
               </View>
-              <Text style={styles.appName}>InkFlow Care</Text>
-              <Text style={styles.appSubtitle}>Cuidados Pós-Tatuagem</Text>
+              <Text style={styles.appName}>INKFLOWCARE</Text>
+              <Text style={styles.appSubtitle}>CUIDADOS PÓS-TATUAGEM</Text>
             </View>
 
             {/* Boas-vindas */}
             <View style={styles.welcomeContainer}>
-              <Text style={styles.welcomeTitle}>Bem-vindo de volta!</Text>
-              <Text style={styles.welcomeSubtitle}>Continue sua jornada de cuidados</Text>
+              <Text style={styles.welcomeTitle}>Bem-vindo de volta</Text>
+              <Text style={styles.welcomeSubtitle}>Continue sua jornada de cicatrização</Text>
             </View>
 
             {/* Campos */}
             <View style={styles.formContainer}>
               <View style={[styles.inputWrapper, erro && !email && styles.inputErro]}>
-                <Ionicons name="mail-outline" size={20} color="#888" style={styles.inputIcon} />
+                <Ionicons name="mail-outline" size={20} color="#666" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Email"
@@ -89,7 +88,7 @@ export default function LoginScreen() {
               </View>
 
               <View style={[styles.inputWrapper, erro && !senha && styles.inputErro]}>
-                <Ionicons name="lock-closed-outline" size={20} color="#888" style={styles.inputIcon} />
+                <Ionicons name="lock-closed-outline" size={20} color="#666" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Senha"
@@ -98,21 +97,20 @@ export default function LoginScreen() {
                   value={senha}
                   onChangeText={(v) => { setSenha(v); setErro(''); }}
                 />
-                <Pressable onPress={() => setShowSenha(!showSenha)} style={styles.eyeIcon}>
-                  <Ionicons name={showSenha ? 'eye-outline' : 'eye-off-outline'} size={20} color="#888" />
+                <Pressable onPress={() => setShowSenha(!showSenha)} style={styles.eyeIcon} hitSlop={10}>
+                  <Ionicons name={showSenha ? 'eye-outline' : 'eye-off-outline'} size={20} color="#666" />
                 </Pressable>
               </View>
 
               {/* Mensagem de erro */}
               {!!erro && (
                 <View style={styles.erroContainer}>
-                  <Ionicons name="alert-circle-outline" size={15} color="#FF0000" />
+                  <Ionicons name="alert-circle-outline" size={16} color="#ff8d8c" />
                   <Text style={styles.erroTexto}>{erro}</Text>
                 </View>
               )}
 
-              <Pressable style={styles.forgotPassword} onPress={() => Alert.alert('Recuperar senha', 'Insere o teu email e enviaremos um link de recuperação.\n\n(Funcionalidade disponível após integração com o backend)')}
-              >
+              <Pressable style={styles.forgotPassword} onPress={() => Alert.alert('Recuperar senha', 'Insira o seu email e enviaremos um link de recuperação.\n\n(Funcionalidade disponível em breve)')}>
                 <Text style={styles.forgotPasswordText}>Esqueceu a senha?</Text>
               </Pressable>
 
@@ -123,11 +121,11 @@ export default function LoginScreen() {
                 disabled={loading}
               >
                 {loading ? (
-                  <ActivityIndicator color="#fff" />
+                  <ActivityIndicator color="#0e0e0e" />
                 ) : (
                   <>
-                    <Text style={styles.loginButtonText}>Entrar</Text>
-                    <Ionicons name="arrow-forward" size={20} color="#fff" />
+                    <Text style={styles.loginButtonText}>ENTRAR</Text>
+                    <Ionicons name="arrow-forward" size={20} color="#0e0e0e" />
                   </>
                 )}
               </Pressable>
@@ -143,7 +141,7 @@ export default function LoginScreen() {
             {/* Rodapé */}
             <View style={styles.footer}>
               <Text style={styles.footerText}>Não tem conta? </Text>
-              <Pressable onPress={() => Alert.alert('Cadastro', 'O cadastro é feito através do site.\nApós criar a conta, usa o mesmo email e senha aqui no app.')}>
+              <Pressable onPress={() => Alert.alert('Cadastro', 'O cadastro é feito através do site.\nApós criar a conta, use o mesmo email e senha aqui no app.')}>
                 <Text style={styles.footerLink}>Cadastre-se</Text>
               </Pressable>
             </View>
@@ -151,78 +149,67 @@ export default function LoginScreen() {
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
-    </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  gradient: { flex: 1 },
+  container: { flex: 1, backgroundColor: '#0e0e0e' },
   safe: { flex: 1 },
   flex: { flex: 1 },
-  scroll: { flexGrow: 1, paddingHorizontal: 28, paddingVertical: 20 },
+  scroll: { flexGrow: 1, paddingHorizontal: 28, paddingVertical: 40, justifyContent: 'center' },
 
-  logoContainer: { alignItems: 'center', marginTop: 20, marginBottom: 32 },
+  logoContainer: { alignItems: 'center', marginBottom: 48 },
   logoCircle: {
     width: 80, height: 80, borderRadius: 40,
-    backgroundColor: 'rgba(255,0,0,0.1)',
-    borderWidth: 1.5, borderColor: 'rgba(255,0,0,0.3)',
-    justifyContent: 'center', alignItems: 'center', marginBottom: 14,
-    shadowColor: '#FF0000', shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.4, shadowRadius: 12, elevation: 8,
+    backgroundColor: 'rgba(255, 141, 140, 0.08)',
+    borderWidth: 1, borderColor: 'rgba(255, 141, 140, 0.2)',
+    justifyContent: 'center', alignItems: 'center', marginBottom: 16,
   },
-  appName: { fontSize: 26, fontWeight: '700', color: '#fff', letterSpacing: 0.5 },
-  appSubtitle: { fontSize: 13, color: '#888', marginTop: 4 },
+  appName: { fontSize: 24, fontWeight: '800', color: '#fff', letterSpacing: 2 },
+  appSubtitle: { fontSize: 12, color: '#adaaaa', marginTop: 6, letterSpacing: 1.5, fontWeight: '600' },
 
-  welcomeContainer: { marginBottom: 28 },
-  welcomeTitle: { fontSize: 22, fontWeight: '700', color: '#fff' },
-  welcomeSubtitle: { fontSize: 14, color: '#888', marginTop: 4 },
+  welcomeContainer: { marginBottom: 32 },
+  welcomeTitle: { fontSize: 28, fontWeight: '700', color: '#fff', letterSpacing: -0.5 },
+  welcomeSubtitle: { fontSize: 15, color: '#adaaaa', marginTop: 8 },
 
-  formContainer: { gap: 14 },
+  formContainer: { gap: 16 },
 
   inputWrapper: {
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.05)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 12, paddingHorizontal: 14, height: 52,
+    backgroundColor: '#131313',
+    borderWidth: 1, borderColor: '#262626',
+    borderRadius: 12, paddingHorizontal: 16, height: 56,
   },
-  inputErro: { borderColor: 'rgba(255,0,0,0.5)' },
-  inputIcon: { marginRight: 10 },
+  inputErro: { borderColor: 'rgba(255, 141, 140, 0.5)' },
+  inputIcon: { marginRight: 12 },
   input: { flex: 1, color: '#fff', fontSize: 15 },
   eyeIcon: { padding: 4 },
 
   erroContainer: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    backgroundColor: 'rgba(255,0,0,0.08)',
-    borderWidth: 1, borderColor: 'rgba(255,0,0,0.2)',
-    borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8,
-    marginTop: -4,
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    backgroundColor: 'rgba(255, 141, 140, 0.08)',
+    borderWidth: 1, borderColor: 'rgba(255, 141, 140, 0.2)',
+    borderRadius: 10, paddingHorizontal: 14, paddingVertical: 12,
   },
-  erroTexto: { color: '#FF6666', fontSize: 13, flex: 1 },
+  erroTexto: { color: '#ff8d8c', fontSize: 13, flex: 1, fontWeight: '500' },
 
-  forgotPassword: { alignSelf: 'flex-end', marginTop: -4 },
-  forgotPasswordText: { color: '#FF0000', fontSize: 13 },
+  forgotPassword: { alignSelf: 'flex-end', marginTop: 4 },
+  forgotPasswordText: { color: '#adaaaa', fontSize: 13, fontWeight: '500' },
 
   loginButton: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    backgroundColor: '#FF0000', borderRadius: 12, height: 52, gap: 8, marginTop: 4,
-    shadowColor: '#FF0000', shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4, shadowRadius: 10, elevation: 6,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10,
+    backgroundColor: '#ff8d8c', borderRadius: 12, height: 56, marginTop: 8,
   },
-  loginButtonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  loginButtonText: { color: '#0e0e0e', fontSize: 15, fontWeight: '800', letterSpacing: 0.5 },
 
-  divider: { flexDirection: 'row', alignItems: 'center', gap: 10, marginVertical: 4 },
-  dividerLine: { flex: 1, height: 1, backgroundColor: 'rgba(255,255,255,0.1)' },
-  dividerText: { color: '#555', fontSize: 13 },
+  divider: { flexDirection: 'row', alignItems: 'center', gap: 14, marginVertical: 12 },
+  dividerLine: { flex: 1, height: 1, backgroundColor: '#262626' },
+  dividerText: { color: '#adaaaa', fontSize: 13, fontWeight: '500' },
 
-  demoButton: {
-    borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.2)',
-    borderRadius: 12, height: 52, justifyContent: 'center', alignItems: 'center',
-  },
-  demoButtonText: { color: '#ccc', fontSize: 15, fontWeight: '500' },
+  pressed: { opacity: 0.8 },
 
-  pressed: { opacity: 0.65 },
-
-  footer: { flexDirection: 'row', justifyContent: 'center', marginTop: 32 },
-  footerText: { color: '#888', fontSize: 14 },
-  footerLink: { color: '#FF0000', fontSize: 14, fontWeight: '600' },
+  footer: { flexDirection: 'row', justifyContent: 'center', marginTop: 24 },
+  footerText: { color: '#adaaaa', fontSize: 14 },
+  footerLink: { color: '#ff8d8c', fontSize: 14, fontWeight: '700' },
 });
