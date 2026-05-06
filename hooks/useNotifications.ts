@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Notifications from 'expo-notifications';
 import api from '@/services/api';
 
 const NOTIF_PREFS_KEY = '@inkflow:notif_prefs';
@@ -19,17 +20,60 @@ const DEFAULT_PREFS: NotifPreferences = {
   horarioNoite: '21:00',
 };
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
+
+function parseHorario(horario: string): { hour: number; minute: number } {
+  const [h, m] = horario.split(':').map(Number);
+  return { hour: h, minute: m };
+}
+
+async function agendarNotificacoes(prefs: NotifPreferences) {
+  if (Platform.OS === 'web') return;
+
+  await Notifications.cancelAllScheduledNotificationsAsync();
+
+  if (!prefs.ativas) return;
+
+  const periodos = [
+    { horario: prefs.horarioManha, titulo: 'Cuidados da manhã ☀️', corpo: 'Hora de lavar e hidratar sua tatuagem!' },
+    { horario: prefs.horarioTarde, titulo: 'Cuidados da tarde 🌤️', corpo: 'Não esqueça de reaplicar a pomada!' },
+    { horario: prefs.horarioNoite, titulo: 'Cuidados da noite 🌙', corpo: 'Último cuidado do dia antes de dormir.' },
+  ];
+
+  for (const p of periodos) {
+    const { hour, minute } = parseHorario(p.horario);
+    await Notifications.scheduleNotificationAsync({
+      content: { title: p.titulo, body: p.corpo, sound: true },
+      trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour, minute },
+    });
+  }
+}
+
 export function useNotifications(usuarioId?: number) {
   const [permissao, setPermissao] = useState(Platform.OS === 'web');
   const [prefs, setPrefs] = useState<NotifPreferences>(DEFAULT_PREFS);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    solicitarPermissao();
     carregarPrefs();
   }, [usuarioId]);
 
+  async function solicitarPermissao() {
+    if (Platform.OS === 'web') return;
+    const { status } = await Notifications.requestPermissionsAsync();
+    setPermissao(status === 'granted');
+  }
+
   async function carregarPrefs() {
-    // Tentar carregar do backend primeiro
     if (usuarioId) {
       try {
         const response = await api.get(`/notificacoes/usuario/${usuarioId}`);
@@ -42,19 +86,21 @@ export function useNotifications(usuarioId?: number) {
           };
           setPrefs(backendPrefs);
           await AsyncStorage.setItem(NOTIF_PREFS_KEY, JSON.stringify(backendPrefs));
+          await agendarNotificacoes(backendPrefs);
           setLoading(false);
           return;
         }
-      } catch (e) {
+      } catch {
         console.log('[NOTIF] Backend indisponível, usando cache local');
       }
     }
 
-    // Fallback: AsyncStorage local
     try {
       const stored = await AsyncStorage.getItem(NOTIF_PREFS_KEY);
       if (stored) {
-        setPrefs(JSON.parse(stored));
+        const parsed = JSON.parse(stored);
+        setPrefs(parsed);
+        await agendarNotificacoes(parsed);
       }
     } catch (e) {
       console.error('[NOTIF] Erro ao carregar prefs:', e);
@@ -66,8 +112,8 @@ export function useNotifications(usuarioId?: number) {
   async function salvarPrefs(novasPrefs: NotifPreferences) {
     setPrefs(novasPrefs);
     await AsyncStorage.setItem(NOTIF_PREFS_KEY, JSON.stringify(novasPrefs));
+    await agendarNotificacoes(novasPrefs);
 
-    // Sincronizar com backend
     if (usuarioId) {
       try {
         await api.put(`/notificacoes/usuario/${usuarioId}`, {
@@ -76,27 +122,26 @@ export function useNotifications(usuarioId?: number) {
           horarioTarde: novasPrefs.horarioTarde,
           horarioNoite: novasPrefs.horarioNoite,
         });
-      } catch (e) {
+      } catch {
         console.log('[NOTIF] Erro ao sincronizar com backend (salvo localmente)');
       }
     }
   }
 
   const toggleAtivas = useCallback(async () => {
-    const novasPrefs = { ...prefs, ativas: !prefs.ativas };
-    await salvarPrefs(novasPrefs);
+    await salvarPrefs({ ...prefs, ativas: !prefs.ativas });
   }, [prefs, usuarioId]);
 
   async function atualizarHorario(
     periodo: 'horarioManha' | 'horarioTarde' | 'horarioNoite',
     horario: string
   ) {
-    const novasPrefs = { ...prefs, [periodo]: horario };
-    await salvarPrefs(novasPrefs);
+    await salvarPrefs({ ...prefs, [periodo]: horario });
   }
 
   async function cancelarTodas() {
-    console.log('[NOTIF] cancelarTodas (no-op na web)');
+    if (Platform.OS === 'web') return;
+    await Notifications.cancelAllScheduledNotificationsAsync();
   }
 
   return {
