@@ -87,7 +87,7 @@ export default function HomeScreen() {
             <View style={styles.emptyCard}>
               <Ionicons name="bandage-outline" size={48} color="#555" />
               <Text style={styles.emptyCardTitle}>Nenhuma cicatrização ativa</Text>
-              <Text style={styles.emptyCardText}>Quando você agendar uma sessão, o acompanhamento vai aparecer aqui.</Text>
+              <Text style={styles.emptyCardText}>As tatuagens feitas no estúdio são sincronizadas automaticamente com a sua conta.</Text>
             </View>
           ) : (
             <View style={styles.card}>
@@ -176,10 +176,15 @@ export default function HomeScreen() {
             </>
           )}
 
-          {/* Botão adicionar tatuagem */}
+          {/* Info sync + botão adicionar */}
+          <View style={styles.syncInfo}>
+            <Ionicons name="sync-outline" size={14} color="#666" />
+            <Text style={styles.syncInfoText}>Tatuagens do estúdio aparecem automaticamente</Text>
+          </View>
+
           <TouchableOpacity style={styles.addBtn} onPress={() => router.push('/nova-tatuagem')} activeOpacity={0.7}>
             <Ionicons name="add" size={20} color="#FF4757" />
-            <Text style={styles.addBtnText}>Adicionar nova tatuagem</Text>
+            <Text style={styles.addBtnText}>Adicionar tatuagem externa</Text>
           </TouchableOpacity>
 
         </ScrollView>
@@ -311,12 +316,19 @@ const styles = StyleSheet.create({
   lembreteTextoFeito: { textDecorationLine: 'line-through', color: '#999' },
   lembreteHora: { fontSize: 13, color: '#999' },
 
+  // Sync info
+  syncInfo: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: 6, marginBottom: 12, marginTop: 4,
+  },
+  syncInfoText: { fontSize: 12, color: '#666' },
+
   // CTA button
   addBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
-    borderWidth: 1, borderColor: 'rgba(255,71,87,0.3)',
-    borderRadius: 12, height: 56,
-    backgroundColor: 'rgba(255,71,87,0.08)',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
+    borderRadius: 12, height: 48,
+    backgroundColor: 'rgba(255,255,255,0.03)',
   },
-  addBtnText: { color: '#FF4757', fontSize: 14, fontWeight: '700' },
+  addBtnText: { color: '#999', fontSize: 13, fontWeight: '600' },
 });
