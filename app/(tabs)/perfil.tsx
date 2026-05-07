@@ -13,6 +13,7 @@ import { useCicatrizacao } from '@/hooks/useCicatrizacao';
 import { useEstatisticas } from '@/hooks/useEstatisticas';
 import api from '@/services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useCustomAlert } from '@/context/AlertContext';
 
 const TEMA_KEY = '@inkflow:tema_escuro';
 
@@ -31,6 +32,7 @@ export default function PerfilScreen() {
   const notificacoes = notifPrefs.ativas;
   const [temaEscuro, setTemaEscuro] = useState(true);
   const [historico, setHistorico] = useState<any[]>([]);
+  const { showAlert } = useCustomAlert();
 
   useEffect(() => {
     AsyncStorage.getItem(TEMA_KEY).then((val) => {
@@ -72,57 +74,54 @@ export default function PerfilScreen() {
   }
 
   async function salvarPerfil() {
-    if (!nomeEdit.trim()) { Alert.alert('Atenção', 'O nome não pode estar vazio.'); return; }
-    if (!/\S+@\S+\.\S+/.test(emailEdit)) { Alert.alert('Atenção', 'Email inválido.'); return; }
+    if (!nomeEdit.trim()) { 
+      showAlert('Atenção', 'O nome não pode estar vazio.', [{ text: 'OK' }], 'warning'); 
+      return; 
+    }
+    if (!/\S+@\S+\.\S+/.test(emailEdit)) { 
+      showAlert('Atenção', 'Email inválido.', [{ text: 'OK' }], 'warning'); 
+      return; 
+    }
     try {
       await api.put(`/clientes/${user?.id}`, { fullName: nomeEdit.trim(), telefone: user?.telefone });
       setNome(nomeEdit.trim());
       setEmail(emailEdit.trim());
       setModalVisivel(false);
-      Alert.alert('Perfil atualizado!', 'As tuas informações foram salvas.');
+      showAlert('Perfil atualizado!', 'As tuas informações foram salvas.', [{ text: 'OK' }], 'checkmark-circle');
     } catch (err: any) {
-      Alert.alert('Erro', err.response?.data?.message || 'Não foi possível salvar.');
+      showAlert('Erro', err.response?.data?.message || 'Não foi possível salvar.', [{ text: 'OK' }], 'close-circle');
     }
   }
 
   function handlePrivacidade() {
-    if (Platform.OS === 'web') {
-      window.alert('Privacidade\n\nOs teus dados são armazenados localmente no dispositivo e nunca partilhados com terceiros.');
-    } else {
-      Alert.alert('Privacidade', 'Os teus dados são armazenados localmente no dispositivo e nunca partilhados com terceiros.', [{ text: 'OK' }]);
-    }
+    showAlert(
+      'Privacidade', 
+      'Os teus dados são armazenados localmente no dispositivo e nunca partilhados com terceiros.', 
+      [{ text: 'OK' }], 
+      'lock-closed'
+    );
   }
 
   function handleAjuda() {
-    if (Platform.OS === 'web') {
-      window.alert('Ajuda & Suporte\n\nPara suporte, entra em contacto:\n\n📧 suporte@inkflowcare.com\n\nVersão do app: 1.0.0');
-    } else {
-      Alert.alert(
-        'Ajuda & Suporte',
-        'Para suporte, entra em contacto:\n\n📧 suporte@inkflowcare.com\n\nVersão do app: 1.0.0',
-        [{ text: 'OK' }]
-      );
-    }
+    showAlert(
+      'Ajuda & Suporte',
+      'Para suporte, entra em contacto:\n\n📧 suporte@inkflowcare.com\n\nVersão do app: 1.0.0',
+      [{ text: 'OK' }],
+      'help-circle'
+    );
   }
 
   async function handleLogout() {
-    if (Platform.OS === 'web') {
-      const confirmou = window.confirm('Tens a certeza que queres sair?');
-      if (confirmou) {
-        await logout();
-      }
-    } else {
-      Alert.alert('Sair da conta', 'Tens a certeza que queres sair?', [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Sair',
-          style: 'destructive',
-          onPress: async () => {
-            await logout();
-          }
-        },
-      ]);
-    }
+    showAlert('Sair da conta', 'Tens a certeza que queres sair?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Sair',
+        style: 'destructive',
+        onPress: async () => {
+          await logout();
+        }
+      },
+    ], 'log-out-outline');
   }
 
   const emCuidado = historico.filter((t) => t.status === 'ATIVA').length;
