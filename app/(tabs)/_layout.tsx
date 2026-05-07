@@ -55,7 +55,10 @@ export default function TabLayout() {
             <View style={{
               backgroundColor: focused ? 'rgba(255,71,87,0.15)' : 'transparent',
               borderRadius: 8,
-              padding: 12,
+              width: 48,
+              height: 48,
+              alignItems: 'center',
+              justifyContent: 'center',
             }}>
               <Ionicons name={focused ? 'grid' : 'grid-outline'} size={24} color={color} />
             </View>
@@ -69,7 +72,10 @@ export default function TabLayout() {
             <View style={{
               backgroundColor: focused ? 'rgba(255,71,87,0.15)' : 'transparent',
               borderRadius: 8,
-              padding: 12,
+              width: 48,
+              height: 48,
+              alignItems: 'center',
+              justifyContent: 'center',
             }}>
               <Ionicons name={focused ? 'bandage' : 'bandage-outline'} size={24} color={color} />
             </View>
@@ -83,7 +89,10 @@ export default function TabLayout() {
             <View style={{
               backgroundColor: focused ? 'rgba(255,71,87,0.15)' : 'transparent',
               borderRadius: 8,
-              padding: 12,
+              width: 48,
+              height: 48,
+              alignItems: 'center',
+              justifyContent: 'center',
             }}>
               <Ionicons name={focused ? 'document-text' : 'document-text-outline'} size={24} color={color} />
             </View>
@@ -97,7 +106,10 @@ export default function TabLayout() {
             <View style={{
               backgroundColor: focused ? 'rgba(255,71,87,0.15)' : 'transparent',
               borderRadius: 8,
-              padding: 12,
+              width: 48,
+              height: 48,
+              alignItems: 'center',
+              justifyContent: 'center',
             }}>
               <Ionicons name={focused ? 'person' : 'person-outline'} size={24} color={color} />
             </View>
