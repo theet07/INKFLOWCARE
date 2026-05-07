@@ -11,13 +11,13 @@ export interface AlertButton {
 interface AlertState {
   visible: boolean;
   title: string;
-  message: string;
+  message: string | React.ReactNode;
   buttons: AlertButton[];
   icon?: keyof typeof Ionicons.glyphMap;
 }
 
 interface AlertContextData {
-  showAlert: (title: string, message: string, buttons?: AlertButton[], icon?: keyof typeof Ionicons.glyphMap) => void;
+  showAlert: (title: string, message: string | React.ReactNode, buttons?: AlertButton[], icon?: keyof typeof Ionicons.glyphMap) => void;
   hideAlert: () => void;
 }
 
@@ -34,7 +34,7 @@ export function CustomAlertProvider({ children }: { children: React.ReactNode })
 
   const showAlert = (
     title: string,
-    message: string,
+    message: string | React.ReactNode,
     buttons: AlertButton[] = [{ text: 'OK' }],
     icon: keyof typeof Ionicons.glyphMap = 'information-circle-outline'
   ) => {

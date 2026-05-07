@@ -105,7 +105,13 @@ export default function PerfilScreen() {
   function handleAjuda() {
     showAlert(
       'Ajuda & Suporte',
-      'Para suporte, entra em contacto pelo email:\n\nsuporte@inkflowcare.com\n\nVersão do app: 1.0.0',
+      <Text style={{ textAlign: 'center', color: '#adaaaa', lineHeight: 22 }}>
+        Para suporte, entra em contacto:
+        {'\n\n'}
+        <Ionicons name="mail" size={14} color="#adaaaa" /> suporte@inkflowcare.com
+        {'\n\n'}
+        Versão do app: 1.0.0
+      </Text>,
       [{ text: 'OK' }],
       'help-circle'
     );
