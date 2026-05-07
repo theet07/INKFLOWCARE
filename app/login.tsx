@@ -63,14 +63,21 @@ export default function LoginScreen() {
     // Adiciona o parâmetro redirect para que a Web saiba para onde voltar
     const fullUrl = `${WEB_URL}?redirect=${encodeURIComponent(deepLinkUrl)}`;
 
-    Alert.alert(
-      'Criar Conta',
-      'O cadastro é feito com segurança pelo nosso site. Vamos redirecioná-lo(a) para o portal.\n\nApós finalizar, você voltará automaticamente ao app.',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        { text: 'Ir para o site', onPress: () => Linking.openURL(fullUrl) }
-      ]
-    );
+    if (Platform.OS === 'web') {
+      const confirm = window.confirm('O cadastro é feito com segurança pelo nosso site. Vamos redirecioná-lo(a) para o portal.\n\nApós finalizar, você voltará automaticamente ao app.\n\nDeseja ir para o site agora?');
+      if (confirm) {
+        window.open(fullUrl, '_blank'); // ou window.location.href = fullUrl
+      }
+    } else {
+      Alert.alert(
+        'Criar Conta',
+        'O cadastro é feito com segurança pelo nosso site. Vamos redirecioná-lo(a) para o portal.\n\nApós finalizar, você voltará automaticamente ao app.',
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Ir para o site', onPress: () => Linking.openURL(fullUrl) }
+        ]
+      );
+    }
   }
 
   return (
