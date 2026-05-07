@@ -54,8 +54,8 @@ export default function LoginScreen() {
   }
 
   function handleCadastroWeb() {
-    // URL base do frontend Web (Altere caso o domínio final seja outro)
-    const WEB_URL = 'http://localhost:5173/cadastro'; // ou 'https://seusite.com/cadastro'
+    // URL base do frontend Web
+    const WEB_URL = 'https://inkflowfrontend.vercel.app/login';
     
     // Cria uma URL de retorno dinâmica (funciona no Expo Go e em Produção)
     const deepLinkUrl = Linking.createURL('/login');
