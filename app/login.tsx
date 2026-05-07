@@ -13,6 +13,7 @@ import {
   TextInput,
   View,
   Image,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Alert } from 'react-native';
@@ -25,6 +26,7 @@ export default function LoginScreen() {
   const [showSenha, setShowSenha] = useState(false);
   const [erro, setErro] = useState('');
   const [loading, setLoading] = useState(false);
+  const [modalVisivel, setModalVisivel] = useState(false);
 
   // Já logado → vai para tabs
   if (logado && !authLoading) {
@@ -54,30 +56,16 @@ export default function LoginScreen() {
   }
 
   function handleCadastroWeb() {
-    // URL base do frontend Web
-    const WEB_URL = 'https://inkflowfrontend.vercel.app/login';
-    
-    // Cria uma URL de retorno dinâmica (funciona no Expo Go e em Produção)
-    const deepLinkUrl = Linking.createURL('/login');
-    
-    // Adiciona o parâmetro redirect para que a Web saiba para onde voltar
-    const fullUrl = `${WEB_URL}?redirect=${encodeURIComponent(deepLinkUrl)}`;
+    setModalVisivel(true);
+  }
 
-    if (Platform.OS === 'web') {
-      const confirm = window.confirm('O cadastro é feito com segurança pelo nosso site. Vamos redirecioná-lo(a) para o portal.\n\nApós finalizar, você voltará automaticamente ao app.\n\nDeseja ir para o site agora?');
-      if (confirm) {
-        window.open(fullUrl, '_blank'); // ou window.location.href = fullUrl
-      }
-    } else {
-      Alert.alert(
-        'Criar Conta',
-        'O cadastro é feito com segurança pelo nosso site. Vamos redirecioná-lo(a) para o portal.\n\nApós finalizar, você voltará automaticamente ao app.',
-        [
-          { text: 'Cancelar', style: 'cancel' },
-          { text: 'Ir para o site', onPress: () => Linking.openURL(fullUrl) }
-        ]
-      );
-    }
+  function confirmarRedirecionamento() {
+    const WEB_URL = 'https://inkflowfrontend.vercel.app/login';
+    const deepLinkUrl = Linking.createURL('/login');
+    const fullUrl = `${WEB_URL}?redirect=${encodeURIComponent(deepLinkUrl)}`;
+    
+    setModalVisivel(false);
+    Linking.openURL(fullUrl);
   }
 
   return (
@@ -180,6 +168,43 @@ export default function LoginScreen() {
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
+
+      {/* Modal Customizado para Redirecionamento */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisivel}
+        onRequestClose={() => setModalVisivel(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalIconContainer}>
+              <Ionicons name="globe-outline" size={32} color="#ff8d8c" />
+            </View>
+            <Text style={styles.modalTitle}>Ir para o site?</Text>
+            <Text style={styles.modalText}>
+              O cadastro de novas contas é feito com segurança pelo nosso site oficial.{'\n\n'}
+              Vamos redirecioná-lo(a) para o portal e, após finalizar, você voltará automaticamente para o app.
+            </Text>
+            
+            <View style={styles.modalButtonsRow}>
+              <Pressable
+                style={[styles.modalButton, styles.modalButtonCancel]}
+                onPress={() => setModalVisivel(false)}
+              >
+                <Text style={styles.modalButtonCancelText}>Agora não</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.modalButton, styles.modalButtonConfirm]}
+                onPress={confirmarRedirecionamento}
+              >
+                <Text style={styles.modalButtonConfirmText}>Continuar</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
     </View>
   );
 }
@@ -242,4 +267,41 @@ const styles = StyleSheet.create({
   footer: { flexDirection: 'row', justifyContent: 'center', marginTop: 24 },
   footerText: { color: '#adaaaa', fontSize: 14 },
   footerLink: { color: '#ff8d8c', fontSize: 14, fontWeight: '700' },
+
+  // Modal Customizado
+  modalOverlay: {
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.85)',
+    justifyContent: 'center', alignItems: 'center', padding: 24,
+  },
+  modalContent: {
+    backgroundColor: '#131313', borderRadius: 20, padding: 28,
+    width: '100%', maxWidth: 360, alignItems: 'center',
+    borderWidth: 1, borderColor: '#262626',
+  },
+  modalIconContainer: {
+    width: 64, height: 64, borderRadius: 32,
+    backgroundColor: 'rgba(255, 141, 140, 0.1)',
+    justifyContent: 'center', alignItems: 'center', marginBottom: 20,
+  },
+  modalTitle: { fontSize: 22, fontWeight: '700', color: '#fff', marginBottom: 12 },
+  modalText: {
+    fontSize: 15, color: '#adaaaa', textAlign: 'center',
+    lineHeight: 22, marginBottom: 28,
+  },
+  modalButtonsRow: {
+    flexDirection: 'row', gap: 12, width: '100%',
+  },
+  modalButton: {
+    flex: 1, height: 50, borderRadius: 12,
+    justifyContent: 'center', alignItems: 'center',
+  },
+  modalButtonCancel: {
+    backgroundColor: 'transparent',
+    borderWidth: 1, borderColor: '#333',
+  },
+  modalButtonConfirm: {
+    backgroundColor: '#ff8d8c',
+  },
+  modalButtonCancelText: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  modalButtonConfirmText: { color: '#0e0e0e', fontSize: 15, fontWeight: '700' },
 });
