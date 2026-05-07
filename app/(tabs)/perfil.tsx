@@ -311,9 +311,9 @@ export default function PerfilScreen() {
             <View style={styles.modalInput}>
               <Ionicons name="mail-outline" size={18} color="#adaaaa" style={{ marginRight: 10 }} />
               <TextInput
-                style={styles.modalInputText}
+                style={[styles.modalInputText, { color: '#777' }]}
                 value={emailEdit}
-                onChangeText={setEmailEdit}
+                editable={false}
                 placeholderTextColor="#555"
                 placeholder="Teu email"
                 keyboardType="email-address"
