@@ -47,7 +47,8 @@ export default function NovaTatuagemScreen() {
         { text: 'OK', onPress: () => router.back() },
       ]);
     } catch (err: any) {
-      Alert.alert('Erro', err.response?.data?.message || 'Não foi possível criar o acompanhamento.');
+      console.log('Erro detalhado:', err.response?.data || err.message);
+      Alert.alert('Erro', `Erro interno: ${JSON.stringify(err.response?.data || err.message)}`);
     } finally {
       setLoading(false);
     }
