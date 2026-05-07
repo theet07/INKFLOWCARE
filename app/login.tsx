@@ -18,6 +18,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Alert } from 'react-native';
 import { useAuth } from '@/context/auth';
+import api from '@/services/api';
 
 export default function LoginScreen() {
   const { login, logado, loading: authLoading } = useAuth();
@@ -77,7 +78,7 @@ export default function LoginScreen() {
     Linking.openURL(fullUrl);
   }
 
-  // Lógica mockada para a recuperação (pronto para ligar com a API Real depois)
+  // Integração com a API Real
   async function handleRecuperacaoStep1() {
     if (!/\S+@\S+\.\S+/.test(recuperacaoEmail)) {
       setRecuperacaoErro('Insira um e-mail válido.');
@@ -85,11 +86,15 @@ export default function LoginScreen() {
     }
     setRecuperacaoErro('');
     setRecuperacaoLoading(true);
-    // Simula chamada POST /api/auth/recuperar-senha
-    setTimeout(() => {
-      setRecuperacaoLoading(false);
+    
+    try {
+      await api.post('/auth/recuperar-senha', { email: recuperacaoEmail });
       setRecuperacaoStep(2); // Avança para inserir os 6 dígitos
-    }, 1500);
+    } catch (error: any) {
+      setRecuperacaoErro(error.response?.data?.message || 'Erro ao solicitar código. Tente novamente.');
+    } finally {
+      setRecuperacaoLoading(false);
+    }
   }
 
   async function handleRecuperacaoStep2() {
@@ -99,11 +104,15 @@ export default function LoginScreen() {
     }
     setRecuperacaoErro('');
     setRecuperacaoLoading(true);
-    // Simula chamada POST /api/auth/validar-codigo-senha
-    setTimeout(() => {
-      setRecuperacaoLoading(false);
+    
+    try {
+      await api.post('/auth/validar-codigo-senha', { email: recuperacaoEmail, codigo: recuperacaoOtp });
       setRecuperacaoStep(3); // Avança para nova senha
-    }, 1500);
+    } catch (error: any) {
+      setRecuperacaoErro(error.response?.data?.message || 'Código inválido ou expirado.');
+    } finally {
+      setRecuperacaoLoading(false);
+    }
   }
 
   async function handleRecuperacaoStep3() {
@@ -113,16 +122,20 @@ export default function LoginScreen() {
     }
     setRecuperacaoErro('');
     setRecuperacaoLoading(true);
-    // Simula chamada POST /api/auth/redefinir-senha
-    setTimeout(() => {
-      setRecuperacaoLoading(false);
+    
+    try {
+      await api.post('/auth/redefinir-senha', { email: recuperacaoEmail, codigo: recuperacaoOtp, novaSenha: recuperacaoNovaSenha });
       setRecuperacaoVisivel(false);
       setRecuperacaoStep(1);
       setRecuperacaoEmail('');
       setRecuperacaoOtp('');
       setRecuperacaoNovaSenha('');
       Alert.alert('Sucesso!', 'Sua senha foi redefinida. Você já pode fazer login.');
-    }, 1500);
+    } catch (error: any) {
+      setRecuperacaoErro(error.response?.data?.message || 'Erro ao redefinir a senha.');
+    } finally {
+      setRecuperacaoLoading(false);
+    }
   }
 
   function fecharRecuperacao() {
