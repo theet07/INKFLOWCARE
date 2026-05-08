@@ -71,6 +71,16 @@ INKFLOWCARE/             ← App Mobile (React Native)
 - Usar `GO` como separador de batches
 - Tabelas criadas pelo Hibernate com `ddl-auto=update`
 
+### Cloudinary (Upload de Fotos)
+- O backend utiliza o **Cloudinary** para upload e hospedagem das fotos de evolução da tatuagem.
+- As dependências necessárias (já configuradas) são: `cloudinary-http44` e `commons-fileupload`.
+- As seguintes variáveis devem estar no `application.properties` apontando para variáveis de ambiente (nunca fixas):
+  ```properties
+  cloudinary.cloud-name=${CLOUDINARY_CLOUD_NAME}
+  cloudinary.api-key=${CLOUDINARY_API_KEY}
+  cloudinary.api-secret=${CLOUDINARY_API_SECRET}
+  ```
+
 ---
 
 ## ✅ O QUE JÁ FOI FEITO
@@ -206,10 +216,9 @@ Nenhum problema crítico pendente.
 - `context/auth.tsx` — contexto de autenticação
 
 ### Documentação
-- `docs/STATUS_CONSOLIDADO.md` — status real do projeto
-- `docs/PLANO_OTIMIZACAO.md` — plano completo com análise de performance
-- `docs/API_ENDPOINTS.md` — todos os endpoints documentados
-- `docs/GUIA_RAPIDO.md` — referência rápida com curl commands
+- `docs/configuracao/STATUS_PROJETO.md` — status real do projeto
+- `docs/endpoints/API_ENDPOINTS.md` — todos os endpoints documentados
+- `docs/arquitetura/FLUXO_DE_DADOS.md` — fluxos de autenticação, requests, etc.
 
 ---
 
@@ -248,12 +257,11 @@ Sprint 6 (CONCLUÍDO) ✅
 Leia os arquivos abaixo sequencialmente antes de escrever qualquer código:
 
 ```
-1. INKFLOWCARE/docs/HANDOFF.md                          ← este arquivo (contexto geral)
-2. INKFLOWCARE/docs/STATUS_CONSOLIDADO.md               ← o que está feito e o que falta
-3. INKFLOWCARE/docs/PLANO_OTIMIZACAO.md                 ← plano completo com análise de performance
-4. INKFLOWCARE/docs/API_ENDPOINTS.md                    ← contratos de API (não quebrar)
-5. INKFLOWCARE/docs/DOCS.md                             ← design system, bugs conhecidos, padrões de código mobile
-6. INKFLOWCARE/docs/GUIA_RAPIDO.md                      ← tabela de endpoints e como testar
+1. INKFLOWCARE/docs/configuracao/HANDOFF.md                          ← este arquivo (contexto geral)
+2. INKFLOWCARE/docs/configuracao/STATUS_PROJETO.md                   ← o que está feito e o que falta
+3. INKFLOWCARE/docs/endpoints/API_ENDPOINTS.md                       ← contratos de API (não quebrar)
+4. INKFLOWCARE/docs/arquitetura/ARQUITETURA_MOBILE.md                ← design system, bugs conhecidos, padrões de código mobile
+5. INKFLOWCARE/docs/arquitetura/FLUXO_DE_DADOS.md                    ← fluxos e requests entre serviços
 ```
 
 ### Passo 2 — Leitura dos Arquivos Relevantes

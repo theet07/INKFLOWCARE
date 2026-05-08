@@ -27,8 +27,7 @@ Documentação completa de todos os endpoints necessários para integração com
 
 ---
 
-## 🚧 ENDPOINTS QUE PRECISAM SER IMPLEMENTADOS
-
+## ✅ MAIS ENDPOINTS IMPLEMENTADOS
 ### 1️⃣ NOTIFICAÇÕES
 
 #### `GET /notificacoes/usuario/{usuarioId}`
@@ -410,7 +409,26 @@ curl -H "Authorization: Bearer {JWT}" \
 
 ## 🎯 PRÓXIMOS PASSOS
 
-1. Implementar endpoints no backend Spring Boot
-2. Testar cada endpoint com curl/Postman
-3. Verificar se o app mobile detecta automaticamente os dados reais
-4. Remover mock data após confirmação (opcional - pode manter como fallback)
+1. Testar cada endpoint com curl/Postman
+2. Verificar se o app mobile detecta automaticamente os dados reais
+3. Remover mock data após confirmação (opcional - pode manter como fallback)
+
+---
+
+## 🧪 COMO TESTAR RAPIDAMENTE (Atalhos)
+
+**1. Obter Token:**
+```bash
+TOKEN=$(curl -s -X POST https://inkflowbackend-4w1g.onrender.com/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"cat@gmail.com","password":"cat"}' \
+  | jq -r '.token')
+```
+
+**2. Fazer Requisição:**
+```bash
+curl -H "Authorization: Bearer $TOKEN" \
+  https://inkflowbackend-4w1g.onrender.com/api/seu-endpoint-aqui
+```
+
+> **Atenção:** Em caso de erro 500, o problema geralmente é no banco Somee (timeout/cold-start) ou dados de teste inconsistentes. Tente novamente ou recrie o JWT.
