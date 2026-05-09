@@ -61,11 +61,6 @@ Aqui estão os 6 arquivos principais que você precisa conhecer:
 - **Autenticação**: JWT (Válido por 24h)
 - **Credenciais de Teste**: `cat@gmail.com` / `cat`
 
-### O que já está pronto?
-O frontend mobile já possui 95% das funcionalidades implementadas, e o backend já possui a estrutura base de autenticação, perfil e checklist funcionando perfeitamente.
-
-### Próximos Passos
-Siga o **[PLANO_OTIMIZACAO.md](docs/PLANO_OTIMIZACAO.md)** para otimizar os 8 contratos críticos de integração entre o App e a API, garantindo estabilidade e performance sem quebrar os fluxos existentes.
 
 ---
 
