@@ -95,27 +95,11 @@ export default function PerfilScreen() {
   }
 
   function handlePrivacidade() {
-    showAlert(
-      'Privacidade', 
-      'Os teus dados são armazenados localmente no dispositivo e nunca partilhados com terceiros.', 
-      [{ text: 'OK' }], 
-      'lock-closed'
-    );
+    router.push('/privacidade');
   }
 
   function handleAjuda() {
-    showAlert(
-      'Ajuda & Suporte',
-      <Text style={{ textAlign: 'center', color: '#adaaaa', lineHeight: 22 }}>
-        Para suporte, entra em contacto:
-        {'\n\n'}
-        <Ionicons name="mail" size={14} color="#adaaaa" /> suporte@inkflowcare.com
-        {'\n\n'}
-        Versão do app: 1.0.0
-      </Text>,
-      [{ text: 'OK' }],
-      'help-circle'
-    );
+    router.push('/ajuda');
   }
 
   async function handleLogout() {
