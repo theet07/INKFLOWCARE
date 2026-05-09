@@ -272,6 +272,12 @@ export default function PerfilScreen() {
               <Ionicons name="chevron-forward" size={20} color="#adaaaa" />
             </TouchableOpacity>
 
+            {/* Alterar Senha */}
+            <TouchableOpacity style={[styles.settingItem, styles.settingBorder]} onPress={() => router.push('/alterar-senha')} activeOpacity={0.7}>
+              <Text style={styles.settingText}>Alterar senha</Text>
+              <Ionicons name="chevron-forward" size={20} color="#adaaaa" />
+            </TouchableOpacity>
+
             {/* Ajuda */}
             <TouchableOpacity style={styles.settingItem} onPress={handleAjuda} activeOpacity={0.7}>
               <Text style={styles.settingText}>Ajuda</Text>
