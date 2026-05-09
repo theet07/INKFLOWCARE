@@ -61,13 +61,9 @@ export default function Ajuda() {
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.safe}>
-        {/* Header */}
+        {/* Título Interno */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.headerBtn}>
-            <Ionicons name="arrow-back" size={24} color="#fff" />
-          </TouchableOpacity>
           <Text style={styles.headerTitle}>Ajuda & Suporte</Text>
-          <View style={{ width: 40 }} />
         </View>
 
         <ScrollView style={styles.scroll} contentContainerStyle={{ paddingBottom: 60 }}>
@@ -126,9 +122,8 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0e0e0e' },
   safe: { flex: 1 },
   header: {
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     paddingHorizontal: 16,
     height: 64,
     borderBottomWidth: 1,
