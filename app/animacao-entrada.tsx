@@ -8,7 +8,15 @@ const COLORS = ['#FF4757', '#ff8d8c', '#ffffff'];
 
 export default function AnimacaoEntrada() {
   const router = useRouter();
-  const { logado } = useAuth();
+  const { logado, loading } = useAuth();
+  
+  const logadoRef = useRef(logado);
+  const loadingRef = useRef(loading);
+
+  useEffect(() => {
+    logadoRef.current = logado;
+    loadingRef.current = loading;
+  }, [logado, loading]);
   
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -37,28 +45,17 @@ export default function AnimacaoEntrada() {
         duration: 400,
         useNativeDriver: true,
       }),
-      Animated.sequence([
-        Animated.timing(scaleAnim, {
-          toValue: 1.2,
-          duration: 100,
-          useNativeDriver: true,
-        }),
-        Animated.timing(scaleAnim, {
-          toValue: 0.95,
-          duration: 100,
-          useNativeDriver: true,
-        }),
-        Animated.timing(scaleAnim, {
-          toValue: 1.05,
-          duration: 100,
-          useNativeDriver: true,
-        }),
-        Animated.timing(scaleAnim, {
-          toValue: 1.0,
-          duration: 100,
-          useNativeDriver: true,
-        }),
-      ]),
+      Animated.timing(scaleAnim, {
+        toValue: 1.2,
+        duration: 400,
+        easing: Easing.elastic(1.5),
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnim, {
+        toValue: 1.0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
     ]).start();
 
     // Fase 3: Partículas (600ms → 1200ms)
@@ -79,14 +76,25 @@ export default function AnimacaoEntrada() {
         useNativeDriver: true,
       }).start(() => {
         // Redireciona com base na autenticação
-        if (logado) {
-          router.replace('/(tabs)');
+        if (!loadingRef.current) {
+          if (logadoRef.current) {
+            router.replace('/(tabs)');
+          } else {
+            router.replace('/login');
+          }
         } else {
-          router.replace('/login');
+          // Se ainda estiver carregando, espera um pouco mais
+          setTimeout(() => {
+            if (logadoRef.current) {
+              router.replace('/(tabs)');
+            } else {
+              router.replace('/login');
+            }
+          }, 500);
         }
       });
     }, 1200);
-  }, [logado]); // Dependência em logado para garantir que pega o estado mais recente se a API demorar um pouco
+  }, []); // Remove as dependências para rodar a animação apenas UMA vez
 
   return (
     <Animated.View style={[styles.container, { opacity: screenFadeAnim }]}>
