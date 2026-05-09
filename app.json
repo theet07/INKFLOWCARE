@@ -4,7 +4,7 @@
     "slug": "INKAPP",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/FAVORICON-INKFLOW.png",
     "scheme": "inkapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -14,7 +14,7 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#0e0e0e",
-        "foregroundImage": "./assets/images/adaptive-icon.png"
+        "foregroundImage": "./assets/images/FAVORICON-INKFLOW.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -22,19 +22,19 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/FAVORICON-INKFLOW.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/FAVORICON-INKFLOW.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#0e0e0e",
           "dark": {
-            "image": "./assets/images/splash-icon.png",
+            "image": "./assets/images/FAVORICON-INKFLOW.png",
             "backgroundColor": "#0e0e0e"
           }
         }

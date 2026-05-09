@@ -45,7 +45,7 @@ export default function TabLayout() {
           paddingBottom: insets.bottom || 20,
           paddingTop: 8,
         },
-        tabBarActiveTintColor: '#FF4757',
+        tabBarActiveTintColor: '#ff8d8c',
         tabBarInactiveTintColor: '#adaaaa',
         tabBarShowLabel: false,
         tabBarIconStyle: { marginTop: 0 },
@@ -55,7 +55,7 @@ export default function TabLayout() {
         options={{
           tabBarIcon: ({ color, focused }) => (
             <View style={{
-              backgroundColor: focused ? 'rgba(255,71,87,0.15)' : 'transparent',
+              backgroundColor: focused ? 'rgba(255, 141, 140,0.15)' : 'transparent',
               borderRadius: 8,
               width: 48,
               height: 48,
@@ -72,7 +72,7 @@ export default function TabLayout() {
         options={{
           tabBarIcon: ({ color, focused }) => (
             <View style={{
-              backgroundColor: focused ? 'rgba(255,71,87,0.15)' : 'transparent',
+              backgroundColor: focused ? 'rgba(255, 141, 140,0.15)' : 'transparent',
               borderRadius: 8,
               width: 48,
               height: 48,
@@ -89,7 +89,7 @@ export default function TabLayout() {
         options={{
           tabBarIcon: ({ color, focused }) => (
             <View style={{
-              backgroundColor: focused ? 'rgba(255,71,87,0.15)' : 'transparent',
+              backgroundColor: focused ? 'rgba(255, 141, 140,0.15)' : 'transparent',
               borderRadius: 8,
               width: 48,
               height: 48,
@@ -106,7 +106,7 @@ export default function TabLayout() {
         options={{
           tabBarIcon: ({ color, focused }) => (
             <View style={{
-              backgroundColor: focused ? 'rgba(255,71,87,0.15)' : 'transparent',
+              backgroundColor: focused ? 'rgba(255, 141, 140,0.15)' : 'transparent',
               borderRadius: 8,
               width: 48,
               height: 48,

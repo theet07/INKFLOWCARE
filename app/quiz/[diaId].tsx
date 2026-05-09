@@ -24,7 +24,7 @@ export default function QuizScreen() {
       <View style={styles.container}>
         <SafeAreaView style={styles.safe}>
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#FF4757" />
+            <ActivityIndicator size="large" color="#ff8d8c" />
             <Text style={styles.loadingText}>Carregando quiz...</Text>
           </View>
         </SafeAreaView>
@@ -41,7 +41,7 @@ export default function QuizScreen() {
               <Ionicons
                 name={acertos === totalPerguntas ? 'trophy' : 'ribbon'}
                 size={48}
-                color={acertos === totalPerguntas ? '#FFD700' : '#FF4757'}
+                color={acertos === totalPerguntas ? '#FFD700' : '#ff8d8c'}
               />
             </View>
             <Text style={styles.resultTitle}>
@@ -150,10 +150,10 @@ export default function QuizScreen() {
                 <Text style={[
                   styles.optionText,
                   correta && { color: '#22c55e' },
-                  incorreta && { color: '#FF4757' },
+                  incorreta && { color: '#ff8d8c' },
                 ]}>{opcao}</Text>
                 {correta && <Ionicons name="checkmark-circle" size={22} color="#22c55e" />}
-                {incorreta && <Ionicons name="close-circle" size={22} color="#FF4757" />}
+                {incorreta && <Ionicons name="close-circle" size={22} color="#ff8d8c" />}
               </TouchableOpacity>
             );
           })}
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     width: 8, height: 8, borderRadius: 4,
     backgroundColor: '#333',
   },
-  dotActive: { backgroundColor: '#FF4757', width: 24 },
+  dotActive: { backgroundColor: '#ff8d8c', width: 24 },
   dotDone: { backgroundColor: '#22c55e' },
   headerCounter: { fontSize: 13, color: '#999', fontWeight: '600' },
 
@@ -232,16 +232,16 @@ const styles = StyleSheet.create({
     borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.08)',
     borderRadius: 12, padding: 16, marginBottom: 10,
   },
-  optionSelected: { borderColor: '#FF4757', backgroundColor: 'rgba(255,71,87,0.08)' },
+  optionSelected: { borderColor: '#ff8d8c', backgroundColor: 'rgba(255, 141, 140,0.08)' },
   optionCorrect: { borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.08)' },
-  optionIncorrect: { borderColor: '#FF4757', backgroundColor: 'rgba(255,71,87,0.08)' },
+  optionIncorrect: { borderColor: '#ff8d8c', backgroundColor: 'rgba(255, 141, 140,0.08)' },
   optionLetter: {
     width: 32, height: 32, borderRadius: 16,
     backgroundColor: '#333',
     justifyContent: 'center', alignItems: 'center',
   },
   optionLetterCorrect: { backgroundColor: '#22c55e' },
-  optionLetterIncorrect: { backgroundColor: '#FF4757' },
+  optionLetterIncorrect: { backgroundColor: '#ff8d8c' },
   optionLetterText: { fontSize: 14, fontWeight: '700', color: '#fff' },
   optionText: { flex: 1, fontSize: 15, color: '#ddd', lineHeight: 22 },
 
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
   },
   nextBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
-    backgroundColor: '#FF4757', borderRadius: 12, padding: 16,
+    backgroundColor: '#ff8d8c', borderRadius: 12, padding: 16,
   },
   nextBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },
   finishBtn: {
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   resultTitle: { fontSize: 28, fontWeight: '700', color: '#fff', marginBottom: 8 },
-  resultScore: { fontSize: 48, fontWeight: '700', color: '#FF4757' },
+  resultScore: { fontSize: 48, fontWeight: '700', color: '#ff8d8c' },
   resultLabel: {
     fontSize: 12, color: '#999', fontWeight: '700',
     letterSpacing: 2, marginTop: 4, marginBottom: 32,
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
   },
   xpValue: { fontSize: 20, fontWeight: '700', color: '#FFD700' },
   resultBtn: {
-    backgroundColor: '#FF4757', borderRadius: 12,
+    backgroundColor: '#ff8d8c', borderRadius: 12,
     paddingHorizontal: 48, paddingVertical: 16,
   },
   resultBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },

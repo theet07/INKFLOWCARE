@@ -195,7 +195,7 @@ export default function HomeScreen() {
           </View>
 
           <TouchableOpacity style={styles.addBtn} onPress={() => router.push('/nova-tatuagem')} activeOpacity={0.7}>
-            <Ionicons name="add" size={20} color="#FF4757" />
+            <Ionicons name="add" size={20} color="#ff8d8c" />
             <Text style={styles.addBtnText}>Adicionar tatuagem externa</Text>
           </TouchableOpacity>
 
@@ -215,7 +215,7 @@ export default function HomeScreen() {
         >
           <Pressable style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Ionicons name="notifications" size={24} color="#FF4757" />
+              <Ionicons name="notifications" size={24} color="#ff8d8c" />
               <Text style={styles.modalTitle}>Notificações</Text>
             </View>
             <Text style={styles.modalText}>
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
   },
   headerAvatarFallback: {
     justifyContent: 'center', alignItems: 'center',
-    backgroundColor: '#FF4757',
+    backgroundColor: '#ff8d8c',
   },
   headerAvatarLetter: {
     fontSize: 18, fontWeight: '700', color: '#fff',
@@ -275,9 +275,9 @@ const styles = StyleSheet.create({
   notifBadge: {
     position: 'absolute', top: 4, right: 4,
     width: 16, height: 16, borderRadius: 8,
-    backgroundColor: '#FF9500', justifyContent: 'center', alignItems: 'center',
+    backgroundColor: '#ff8d8c', justifyContent: 'center', alignItems: 'center',
   },
-  notifBadgeText: { color: '#fff', fontSize: 10, fontWeight: '700' },
+  notifBadgeText: { color: '#0e0e0e', fontSize: 10, fontWeight: '700' },
 
   // Empty state card
   emptyCard: {
@@ -307,10 +307,10 @@ const styles = StyleSheet.create({
   faseText: { color: '#fff', fontSize: 11, fontWeight: '700' },
 
   progressRow: { flexDirection: 'row', alignItems: 'baseline', gap: 8, marginBottom: 8 },
-  progressPercent: { fontSize: 32, fontWeight: '700', color: '#FF4757' },
+  progressPercent: { fontSize: 32, fontWeight: '700', color: '#ff8d8c' },
   progressConcluido: { fontSize: 13, color: '#999' },
   progressBar: { height: 6, backgroundColor: '#2A2A2A', borderRadius: 3, marginBottom: 24, overflow: 'hidden' },
-  progressFill: { height: 6, backgroundColor: '#FF4757', borderRadius: 3 },
+  progressFill: { height: 6, backgroundColor: '#ff8d8c', borderRadius: 3 },
 
   cardInfo: {
     flexDirection: 'row', flexWrap: 'wrap', gap: 16,
@@ -320,18 +320,18 @@ const styles = StyleSheet.create({
   cardInfoLabel: { fontSize: 12, color: '#999', marginBottom: 4 },
   cardInfoRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   cardInfoValue: { fontSize: 14, fontWeight: '700', color: '#fff' },
-  cardInfoValueRed: { color: '#FF4757' },
+  cardInfoValueRed: { color: '#ff8d8c' },
 
   // Section header
   sectionHeader: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8,
   },
   sectionTitle: { fontSize: 16, fontWeight: '700', color: '#fff' },
-  sectionCounter: { fontSize: 13, color: '#FF4757', fontWeight: '600' },
+  sectionCounter: { fontSize: 13, color: '#ff8d8c', fontWeight: '600' },
 
   // Thin progress bar under section title
   thinProgressBar: { height: 3, backgroundColor: '#2A2A2A', borderRadius: 1.5, marginBottom: 16, overflow: 'hidden' },
-  thinProgressFill: { height: 3, backgroundColor: '#FF4757', borderRadius: 1.5 },
+  thinProgressFill: { height: 3, backgroundColor: '#ff8d8c', borderRadius: 1.5 },
 
   // Lembretes container
   lembretesContainer: {
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
   // Checked: solid red circle with white check
   checkboxChecked: {
     width: 28, height: 28, borderRadius: 14,
-    backgroundColor: '#FF4757',
+    backgroundColor: '#ff8d8c',
     justifyContent: 'center', alignItems: 'center',
   },
   // Unchecked: circle with #555 border
@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
     marginBottom: 24, lineHeight: 24,
   },
   modalBtn: {
-    backgroundColor: '#FF4757', width: '100%',
+    backgroundColor: '#ff8d8c', width: '100%',
     paddingVertical: 14, borderRadius: 12,
     alignItems: 'center',
   },

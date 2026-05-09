@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
 import { useState } from 'react';
 import {
   ActivityIndicator,
@@ -11,6 +11,7 @@ import {
   Text,
   TextInput,
   View,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import api from '@/services/api';
@@ -84,6 +85,7 @@ export default function CadastroScreen() {
 
   return (
     <View style={styles.container}>
+      <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={styles.safe}>
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
@@ -95,6 +97,10 @@ export default function CadastroScreen() {
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.flex}>
           <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
 
+            <Image 
+              source={require('@/assets/images/FAVORICON-INKFLOW.png')} 
+              style={{ width: 100, height: 100, resizeMode: 'contain', alignSelf: 'center', tintColor: '#fff', marginTop: -60, marginBottom: 24 }} 
+            />
             <View style={styles.welcomeContainer}>
               <Text style={styles.welcomeTitle}>Junte-se ao InkFlow</Text>
               <Text style={styles.welcomeSubtitle}>Preencha seus dados para continuar</Text>
@@ -158,7 +164,7 @@ export default function CadastroScreen() {
 
               {!!erro && (
                 <View style={styles.erroContainer}>
-                  <Ionicons name="alert-circle-outline" size={16} color="#FF4757" />
+                  <Ionicons name="alert-circle-outline" size={16} color="#ff8d8c" />
                   <Text style={styles.erroTexto}>{erro}</Text>
                 </View>
               )}
@@ -173,7 +179,7 @@ export default function CadastroScreen() {
                 ) : (
                   <>
                     <Text style={styles.cadastrarButtonText}>CADASTRAR</Text>
-                    <Ionicons name="arrow-forward" size={20} color="#fff" />
+                    <Ionicons name="arrow-forward" size={20} color="#0e0e0e" />
                   </>
                 )}
               </Pressable>
@@ -198,9 +204,9 @@ const styles = StyleSheet.create({
   headerTitle: { color: '#fff', fontSize: 18, fontWeight: '700' },
   scroll: { flexGrow: 1, paddingHorizontal: 28, paddingVertical: 24, justifyContent: 'center' },
 
-  welcomeContainer: { marginBottom: 32 },
-  welcomeTitle: { fontSize: 28, fontWeight: '700', color: '#fff', letterSpacing: -0.5 },
-  welcomeSubtitle: { fontSize: 15, color: '#adaaaa', marginTop: 8 },
+  welcomeContainer: { marginBottom: 32, alignItems: 'center' },
+  welcomeTitle: { fontSize: 28, fontWeight: '700', color: '#fff', letterSpacing: -0.5, textAlign: 'center' },
+  welcomeSubtitle: { fontSize: 15, color: '#adaaaa', marginTop: 8, textAlign: 'center' },
 
   formContainer: { gap: 16 },
 
@@ -210,24 +216,24 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: '#333',
     borderRadius: 12, paddingHorizontal: 16, height: 56,
   },
-  inputErro: { borderColor: 'rgba(255, 71, 87, 0.5)' },
+  inputErro: { borderColor: 'rgba(255, 141, 140, 0.5)' },
   inputIcon: { marginRight: 12 },
   input: { flex: 1, color: '#fff', fontSize: 15 },
   eyeIcon: { padding: 4 },
 
   erroContainer: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
-    backgroundColor: 'rgba(255, 71, 87, 0.08)',
-    borderWidth: 1, borderColor: 'rgba(255, 71, 87, 0.2)',
+    backgroundColor: 'rgba(255, 141, 140, 0.08)',
+    borderWidth: 1, borderColor: 'rgba(255, 141, 140, 0.2)',
     borderRadius: 10, paddingHorizontal: 14, paddingVertical: 12,
   },
-  erroTexto: { color: '#FF4757', fontSize: 13, flex: 1, fontWeight: '500' },
+  erroTexto: { color: '#ff8d8c', fontSize: 13, flex: 1, fontWeight: '500' },
 
   cadastrarButton: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10,
-    backgroundColor: '#FF4757', borderRadius: 12, height: 56, marginTop: 16,
+    backgroundColor: '#ff8d8c', borderRadius: 12, height: 56, marginTop: 16,
   },
-  cadastrarButtonText: { color: '#fff', fontSize: 15, fontWeight: '800', letterSpacing: 0.5 },
+  cadastrarButtonText: { color: '#0e0e0e', fontSize: 15, fontWeight: '800', letterSpacing: 0.5 },
 
   pressed: { opacity: 0.8 },
 });

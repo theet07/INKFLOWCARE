@@ -175,7 +175,7 @@ export default function PerfilScreen() {
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
-              <Text style={[styles.statNum, { color: '#FF4757' }]}>{stats.streakAtual}</Text>
+              <Text style={[styles.statNum, { color: '#ff8d8c' }]}>{stats.streakAtual}</Text>
               <Text style={styles.statLabel}>STREAK</Text>
             </View>
             <View style={styles.statDivider} />
@@ -232,12 +232,12 @@ export default function PerfilScreen() {
             {badges.map((badge) => (
               <View key={badge.id} style={[styles.badgeCard, !badge.desbloqueado && styles.badgeCardLocked]}>
                 <View style={[styles.badgeIconCircle, {
-                  backgroundColor: badge.desbloqueado ? 'rgba(255,71,87,0.15)' : 'rgba(255,255,255,0.05)',
+                  backgroundColor: badge.desbloqueado ? 'rgba(255, 141, 140,0.15)' : 'rgba(255,255,255,0.05)',
                 }]}>
                   <Ionicons
                     name={badge.icone as any}
                     size={24}
-                    color={badge.desbloqueado ? '#FF4757' : '#555'}
+                    color={badge.desbloqueado ? '#ff8d8c' : '#555'}
                   />
                 </View>
                 <Text style={[styles.badgeName, !badge.desbloqueado && { color: '#555' }]} numberOfLines={1}>
@@ -388,27 +388,27 @@ const styles = StyleSheet.create({
   avatarSection: { alignItems: 'center', marginTop: 32, marginBottom: 32 },
   avatar: {
     width: 80, height: 80, borderRadius: 40,
-    backgroundColor: 'rgba(255,71,87,0.3)',
-    borderWidth: 2, borderColor: '#FF4757',
+    backgroundColor: 'rgba(255, 141, 140,0.3)',
+    borderWidth: 2, borderColor: '#ff8d8c',
     justifyContent: 'center', alignItems: 'center', marginBottom: 16,
   },
   avatarImg: {
     width: 80, height: 80, borderRadius: 40,
-    borderWidth: 2, borderColor: '#FF4757',
+    borderWidth: 2, borderColor: '#ff8d8c',
     marginBottom: 16,
   },
-  avatarLetra: { fontSize: 32, fontWeight: '700', color: '#FF4757' },
+  avatarLetra: { fontSize: 32, fontWeight: '700', color: '#ff8d8c' },
   nome: { fontSize: 20, fontWeight: '700', color: '#fff', letterSpacing: -0.5 },
   // text-[#999] text-[13px] mb-4
   email: { fontSize: 13, color: '#999', marginTop: 4, marginBottom: 16 },
-  // border border-[#FF4757] rounded-full px-6 py-2
+  // border border-[#ff8d8c] rounded-full px-6 py-2
   editBtn: {
     paddingHorizontal: 24, paddingVertical: 8,
-    borderWidth: 1, borderColor: '#FF4757',
+    borderWidth: 1, borderColor: '#ff8d8c',
     borderRadius: 20, backgroundColor: 'transparent',
   },
-  // text-[#FF4757] text-[13px] font-semibold
-  editBtnText: { color: '#FF4757', fontSize: 13, fontWeight: '600', letterSpacing: 0.3 },
+  // text-[#ff8d8c] text-[13px] font-semibold
+  editBtnText: { color: '#ff8d8c', fontSize: 13, fontWeight: '600', letterSpacing: 0.3 },
 
   // Stats Card: bg-surface-container-highest rounded-xl p-6 border border-white/5
   statsCard: {
@@ -449,7 +449,7 @@ const styles = StyleSheet.create({
   tatuagemNome: { fontSize: 15, fontWeight: '700', color: '#fff', marginBottom: 4 },
   tatuagemSub: { fontSize: 13, color: '#999' },
   statusBadge: { borderRadius: 6, paddingHorizontal: 10, paddingVertical: 4 },
-  statusAtivo: { backgroundColor: '#FF4757' },
+  statusAtivo: { backgroundColor: '#ff8d8c' },
   statusConcluido: { backgroundColor: '#22c55e' },
   statusText: { fontSize: 11, fontWeight: '700', textTransform: 'uppercase' },
   statusAtivoText: { color: '#fff' },
@@ -491,19 +491,19 @@ const styles = StyleSheet.create({
 
   logoutBtn: {
     alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: '#FF4757',
+    borderWidth: 1, borderColor: '#ff8d8c',
     borderRadius: 12, paddingVertical: 16,
-    backgroundColor: 'rgba(255,71,87,0.08)',
+    backgroundColor: 'rgba(255, 141, 140,0.08)',
     marginTop: 16,
   },
-  logoutText: { color: '#FF4757', fontSize: 16, fontWeight: '700' },
+  logoutText: { color: '#ff8d8c', fontSize: 16, fontWeight: '700' },
 
   // Badges
   badgesSectionHeader: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
     marginBottom: 16,
   },
-  badgesCounter: { fontSize: 13, color: '#FF4757', fontWeight: '600' },
+  badgesCounter: { fontSize: 13, color: '#ff8d8c', fontWeight: '600' },
   badgesGrid: {
     flexDirection: 'row', flexWrap: 'wrap', gap: 10,
     marginBottom: 32,
@@ -528,7 +528,7 @@ const styles = StyleSheet.create({
     borderRadius: 1.5, overflow: 'hidden',
   },
   badgeProgressFill: {
-    height: 3, backgroundColor: '#FF4757', borderRadius: 1.5,
+    height: 3, backgroundColor: '#ff8d8c', borderRadius: 1.5,
   },
 
   // Modal

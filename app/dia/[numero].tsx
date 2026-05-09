@@ -23,7 +23,7 @@ const periodoIcones: Record<string, any> = {
 // Dicas por fase
 const dicasPorFase: Record<string, { icone: string; cor: string; texto: string }[]> = {
   FASE_1_PRIMEIRAS_24H: [
-    { icone: 'bandage-outline', cor: '#FF4757', texto: 'Mantenha o curativo por 2-4 horas após a sessão' },
+    { icone: 'bandage-outline', cor: '#ff8d8c', texto: 'Mantenha o curativo por 2-4 horas após a sessão' },
     { icone: 'water-outline', cor: '#3B82F6', texto: 'Lave com água morna e sabão neutro' },
     { icone: 'hand-left-outline', cor: '#FF8C00', texto: 'Não toque na tatuagem com as mãos sujas' },
     { icone: 'bed-outline', cor: '#8B5CF6', texto: 'Durma com roupa leve e folgada' },
@@ -35,7 +35,7 @@ const dicasPorFase: Record<string, { icone: string; cor: string; texto: string }
     { icone: 'shirt-outline', cor: '#FF8C00', texto: 'Use roupas de algodão sobre a região' },
   ],
   FASE_3_DESCAMACAO: [
-    { icone: 'alert-circle-outline', cor: '#FF4757', texto: 'NÃO arranque as casquinhas! Deixe cair naturalmente' },
+    { icone: 'alert-circle-outline', cor: '#ff8d8c', texto: 'NÃO arranque as casquinhas! Deixe cair naturalmente' },
     { icone: 'color-fill-outline', cor: '#22c55e', texto: 'Hidrate bastante — a pele está se renovando' },
     { icone: 'fitness-outline', cor: '#FF8C00', texto: 'Evite exercícios intensos que causem atrito' },
     { icone: 'water-outline', cor: '#3B82F6', texto: 'Não mergulhe em piscinas ou mar' },
@@ -124,8 +124,8 @@ export default function DiaScreen() {
             <View style={styles.summaryRow}>
               {/* XP */}
               <View style={styles.summaryItem}>
-                <View style={[styles.summaryIconCircle, { backgroundColor: 'rgba(255,71,87,0.15)' }]}>
-                  <Ionicons name="flash" size={20} color="#FF4757" />
+                <View style={[styles.summaryIconCircle, { backgroundColor: 'rgba(255, 141, 140,0.15)' }]}>
+                  <Ionicons name="flash" size={20} color="#ff8d8c" />
                 </View>
                 <Text style={styles.summaryValue}>{xpGanho}</Text>
                 <Text style={styles.summaryLabel}>XP GANHO</Text>
@@ -192,7 +192,7 @@ export default function DiaScreen() {
           {/* Checklist */}
           {loading ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#FF4757" />
+              <ActivityIndicator size="large" color="#ff8d8c" />
               <Text style={styles.loadingText}>Carregando checklist...</Text>
             </View>
           ) : semCicatrizacao ? (
@@ -387,12 +387,12 @@ const styles = StyleSheet.create({
     fontSize: 11, color: '#999',
     textTransform: 'uppercase', letterSpacing: 1.5, fontWeight: '700',
   },
-  progressPercent: { fontSize: 24, fontWeight: '700', color: '#FF4757' },
+  progressPercent: { fontSize: 24, fontWeight: '700', color: '#ff8d8c' },
   progressBarContainer: {
     height: 6, backgroundColor: '#2A2A2A',
     borderRadius: 3, overflow: 'hidden', marginBottom: 8,
   },
-  progressBarFill: { height: 6, backgroundColor: '#FF4757', borderRadius: 3 },
+  progressBarFill: { height: 6, backgroundColor: '#ff8d8c', borderRadius: 3 },
   progressText: { fontSize: 12, color: '#999' },
 
   // Loading / Empty
@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
   },
   periodoTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   periodoTitle: { fontSize: 16, fontWeight: '700', color: '#fff' },
-  periodoCounter: { fontSize: 13, fontWeight: '600', color: '#FF4757' },
+  periodoCounter: { fontSize: 13, fontWeight: '600', color: '#ff8d8c' },
 
   periodoCard: {
     backgroundColor: '#1E1E1E',
@@ -440,7 +440,7 @@ const styles = StyleSheet.create({
 
   checkboxChecked: {
     width: 26, height: 26, borderRadius: 13,
-    backgroundColor: '#FF4757',
+    backgroundColor: '#ff8d8c',
     justifyContent: 'center', alignItems: 'center',
   },
   checkboxUnchecked: {

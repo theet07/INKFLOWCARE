@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { useState, useEffect } from 'react';
 import {
   ActivityIndicator,
@@ -103,6 +103,7 @@ export default function VerificacaoScreen() {
 
   return (
     <View style={styles.container}>
+      <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={styles.safe}>
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
@@ -115,7 +116,7 @@ export default function VerificacaoScreen() {
           <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
 
             <View style={styles.iconContainer}>
-              <Ionicons name="mail-open-outline" size={64} color="#FF4757" />
+              <Ionicons name="mail-open-outline" size={64} color="#ff8d8c" />
             </View>
 
             <View style={styles.welcomeContainer}>
@@ -129,7 +130,6 @@ export default function VerificacaoScreen() {
             <View style={styles.formContainer}>
               
               <View style={[styles.inputWrapper, erro && styles.inputErro]}>
-                <Ionicons name="keypad-outline" size={20} color="#666" style={styles.inputIcon} />
                 <TextInput
                   style={[styles.input, { letterSpacing: 8, fontSize: 20, textAlign: 'center' }]}
                   placeholder="000000"
@@ -143,7 +143,7 @@ export default function VerificacaoScreen() {
 
               {!!erro && (
                 <View style={styles.erroContainer}>
-                  <Ionicons name="alert-circle-outline" size={16} color="#FF4757" />
+                  <Ionicons name="alert-circle-outline" size={16} color="#ff8d8c" />
                   <Text style={styles.erroTexto}>{erro}</Text>
                 </View>
               )}
@@ -169,7 +169,7 @@ export default function VerificacaoScreen() {
                 disabled={cooldown > 0 || reenvioLoading}
               >
                 {reenvioLoading ? (
-                  <ActivityIndicator color="#FF4757" size="small" />
+                  <ActivityIndicator color="#ff8d8c" size="small" />
                 ) : (
                   <Text style={[styles.reenviarTexto, cooldown > 0 && { color: '#666' }]}>
                     {cooldown > 0 ? `Reenviar código em ${cooldown}s` : 'Não recebeu? Reenviar código'}
@@ -211,26 +211,26 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: '#333',
     borderRadius: 12, paddingHorizontal: 16, height: 64,
   },
-  inputErro: { borderColor: 'rgba(255, 71, 87, 0.5)' },
+  inputErro: { borderColor: 'rgba(255, 141, 140, 0.5)' },
   inputIcon: { marginRight: 12 },
   input: { flex: 1, color: '#fff', fontSize: 15 },
 
   erroContainer: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
-    backgroundColor: 'rgba(255, 71, 87, 0.08)',
-    borderWidth: 1, borderColor: 'rgba(255, 71, 87, 0.2)',
+    backgroundColor: 'rgba(255, 141, 140, 0.08)',
+    borderWidth: 1, borderColor: 'rgba(255, 141, 140, 0.2)',
     borderRadius: 10, paddingHorizontal: 14, paddingVertical: 12,
   },
-  erroTexto: { color: '#FF4757', fontSize: 13, flex: 1, fontWeight: '500' },
+  erroTexto: { color: '#ff8d8c', fontSize: 13, flex: 1, fontWeight: '500' },
 
   verificarButton: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10,
-    backgroundColor: '#FF4757', borderRadius: 12, height: 56, marginTop: 8,
+    backgroundColor: '#ff8d8c', borderRadius: 12, height: 56, marginTop: 8,
   },
-  verificarButtonText: { color: '#fff', fontSize: 15, fontWeight: '800', letterSpacing: 0.5 },
+  verificarButtonText: { color: '#0e0e0e', fontSize: 15, fontWeight: '800', letterSpacing: 0.5 },
 
   pressed: { opacity: 0.8 },
 
   reenviarContainer: { alignItems: 'center', marginTop: 24, padding: 12 },
-  reenviarTexto: { color: '#FF4757', fontSize: 14, fontWeight: '600' },
+  reenviarTexto: { color: '#ff8d8c', fontSize: 14, fontWeight: '600' },
 });
