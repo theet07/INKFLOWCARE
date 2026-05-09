@@ -147,7 +147,7 @@ export default function LoginScreen() {
             {/* Logo */}
             <View style={styles.logoContainer}>
               <Image 
-                source={require('@/assets/images/FAVORICON-INKFLOW.png')} 
+                source={require('@/assets/images/FAVORICON-INKFLOW-WHITE.png')} 
                 style={styles.logoImage} 
                 resizeMode="contain"
               />

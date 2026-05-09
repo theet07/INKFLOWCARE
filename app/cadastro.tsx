@@ -98,7 +98,7 @@ export default function CadastroScreen() {
           <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
 
             <Image 
-              source={require('@/assets/images/FAVORICON-INKFLOW.png')} 
+              source={require('@/assets/images/FAVORICON-INKFLOW-WHITE.png')} 
               style={{ width: 100, height: 100, resizeMode: 'contain', alignSelf: 'center', tintColor: '#fff', marginTop: -60, marginBottom: 24 }} 
             />
             <View style={styles.welcomeContainer}>
