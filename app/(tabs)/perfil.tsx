@@ -32,7 +32,7 @@ export default function PerfilScreen() {
   const notificacoes = notifPrefs.ativas;
   const [temaEscuro, setTemaEscuro] = useState(true);
   const [historico, setHistorico] = useState<any[]>([]);
-  const [visibleTattoos, setVisibleTattoos] = useState(3);
+  const [visibleCount, setVisibleCount] = useState(3);
   const { showAlert } = useCustomAlert();
 
   useEffect(() => {
@@ -192,8 +192,8 @@ export default function PerfilScreen() {
               <Text style={{ color: '#666', fontSize: 13, textAlign: 'center', paddingVertical: 16 }}>Nenhuma tatuagem registrada.</Text>
             ) : (
               <>
-                {historico.slice(0, visibleTattoos).map((t) => (
-                  <TouchableOpacity key={t.id} style={styles.tatuagemCard} activeOpacity={0.7}>
+                {historico.slice(0, visibleCount).map((t, index) => (
+                  <TouchableOpacity key={t.id || `tattoo-${index}`} style={styles.tatuagemCard} activeOpacity={0.7}>
                     <View style={styles.tatuagemInfo}>
                       <Text style={styles.tatuagemNome}>{t.agendamento?.regiao || 'Tatuagem'}</Text>
                       <Text style={styles.tatuagemSub}>{t.agendamento?.artista?.nome || 'Artista'} · {t.dataInicio ? new Date(t.dataInicio).toLocaleDateString('pt-BR') : ''}</Text>
@@ -211,10 +211,10 @@ export default function PerfilScreen() {
                     </View>
                   </TouchableOpacity>
                 ))}
-                {historico.length > visibleTattoos && (
+                {historico.length > visibleCount && (
                   <TouchableOpacity 
                     style={{ marginTop: 16, alignItems: 'center', paddingVertical: 8 }} 
-                    onPress={() => setVisibleTattoos(prev => prev + 3)}
+                    onPress={() => setVisibleCount(prev => prev + 3)}
                   >
                     <Text style={{ color: '#e63946', fontSize: 14, fontWeight: 'bold' }}>+ Carregar mais</Text>
                   </TouchableOpacity>

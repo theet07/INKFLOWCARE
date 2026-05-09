@@ -18,6 +18,7 @@ type AuthContextType = {
   loading: boolean;
   login: (email: string, senha: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => Promise<void>;
+  authenticate: (token: string, userData: User) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -89,8 +90,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  async function authenticate(token: string, userData: User) {
+    await AsyncStorage.setItem('@inkflow:token', token);
+    await AsyncStorage.setItem('@inkflow:user', JSON.stringify(userData));
+    setUser(userData);
+    setLogado(true);
+  }
+
   return (
-    <AuthContext.Provider value={{ logado, user, loading, login, logout }}>
+    <AuthContext.Provider value={{ logado, user, loading, login, logout, authenticate }}>
       {children}
     </AuthContext.Provider>
   );

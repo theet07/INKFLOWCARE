@@ -358,8 +358,8 @@ const styles = StyleSheet.create({
     borderRadius: 12, padding: 20,
     marginTop: 24, marginBottom: 20,
   },
-  summaryRow: { flexDirection: 'row', justifyContent: 'space-around' },
-  summaryItem: { alignItems: 'center', gap: 6 },
+  summaryRow: { flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' },
+  summaryItem: { flex: 1, alignItems: 'center', gap: 6 },
   summaryIconCircle: {
     width: 44, height: 44, borderRadius: 22,
     justifyContent: 'center', alignItems: 'center',

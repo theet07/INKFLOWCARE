@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, Modal, Pressable } from 'react-native';
+import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/context/auth';
 import { useCicatrizacao } from '@/hooks/useCicatrizacao';
@@ -45,16 +46,14 @@ export default function HomeScreen() {
   const diasRestantes = totalDias - diaAtual;
   const faseNome = cicatrizacao?.faseAtual ? (faseNomes[cicatrizacao.faseAtual] || 'Em progresso') : '';
 
+  const [notifModalVisible, setNotifModalVisible] = useState(false);
+
   async function toggleLembrete(id: number) {
     await toggleItem(id);
   }
 
   function handleNotificacoes() {
-    Alert.alert(
-      '🔔 Notificações',
-      `Tens ${lembretesAtivos.filter((l) => !l.feito).length} lembretes pendentes para hoje.`,
-      [{ text: 'OK' }]
-    );
+    setNotifModalVisible(true);
   }
 
   return (
@@ -202,6 +201,37 @@ export default function HomeScreen() {
 
         </ScrollView>
       </SafeAreaView>
+
+      {/* Modal de Notificações */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={notifModalVisible}
+        onRequestClose={() => setNotifModalVisible(false)}
+      >
+        <Pressable 
+          style={styles.modalOverlay} 
+          onPress={() => setNotifModalVisible(false)}
+        >
+          <Pressable style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Ionicons name="notifications" size={24} color="#FF4757" />
+              <Text style={styles.modalTitle}>Notificações</Text>
+            </View>
+            <Text style={styles.modalText}>
+              Tens {lembretesAtivos.filter((l) => !l.feito).length} lembretes pendentes para hoje.
+            </Text>
+            <TouchableOpacity 
+              style={styles.modalBtn} 
+              onPress={() => setNotifModalVisible(false)}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.modalBtnText}>OK</Text>
+            </TouchableOpacity>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
     </View>
   );
 }
@@ -332,7 +362,7 @@ const styles = StyleSheet.create({
   lembreteTextRow: {
     flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
   },
-  lembreteTitulo: { fontSize: 15, color: '#fff', fontWeight: '500' },
+  lembreteTitulo: { flexShrink: 1, fontSize: 15, color: '#fff', fontWeight: '500', marginRight: 8 },
   lembreteTextoFeito: { textDecorationLine: 'line-through', color: '#999' },
   lembreteHora: { fontSize: 13, color: '#999' },
 
@@ -351,4 +381,36 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.03)',
   },
   addBtnText: { color: '#999', fontSize: 13, fontWeight: '600' },
+
+  // Modal
+  modalOverlay: {
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.7)',
+    justifyContent: 'center', alignItems: 'center',
+    padding: 24,
+  },
+  modalContent: {
+    width: '100%', backgroundColor: '#1a1a1a',
+    borderRadius: 16, padding: 24,
+    borderWidth: 1, borderColor: '#333',
+    alignItems: 'center',
+  },
+  modalHeader: {
+    flexDirection: 'row', alignItems: 'center',
+    gap: 12, marginBottom: 16,
+  },
+  modalTitle: {
+    color: '#fff', fontSize: 20, fontWeight: 'bold',
+  },
+  modalText: {
+    color: '#ccc', fontSize: 16, textAlign: 'center',
+    marginBottom: 24, lineHeight: 24,
+  },
+  modalBtn: {
+    backgroundColor: '#FF4757', width: '100%',
+    paddingVertical: 14, borderRadius: 12,
+    alignItems: 'center',
+  },
+  modalBtnText: {
+    color: '#fff', fontSize: 16, fontWeight: 'bold',
+  },
 });

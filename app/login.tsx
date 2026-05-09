@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Redirect } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
 import * as Linking from 'expo-linking';
 import { useState } from 'react';
 import {
@@ -21,13 +21,14 @@ import { useAuth } from '@/context/auth';
 import api from '@/services/api';
 
 export default function LoginScreen() {
+  const router = useRouter();
   const { login, logado, loading: authLoading } = useAuth();
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [showSenha, setShowSenha] = useState(false);
   const [erro, setErro] = useState('');
   const [loading, setLoading] = useState(false);
-  const [modalVisivel, setModalVisivel] = useState(false);
+
 
   // Estados de Recuperação de Senha
   const [recuperacaoVisivel, setRecuperacaoVisivel] = useState(false);
@@ -65,17 +66,8 @@ export default function LoginScreen() {
     }
   }
 
-  function handleCadastroWeb() {
-    setModalVisivel(true);
-  }
-
-  function confirmarRedirecionamento() {
-    const WEB_URL = 'https://inkflowfrontend.vercel.app/login';
-    const deepLinkUrl = Linking.createURL('/login');
-    const fullUrl = `${WEB_URL}?redirect=${encodeURIComponent(deepLinkUrl)}`;
-    
-    setModalVisivel(false);
-    Linking.openURL(fullUrl);
+  function handleCadastroApp() {
+    router.push('/cadastro');
   }
 
   // Integração com a API Real
@@ -238,7 +230,7 @@ export default function LoginScreen() {
             {/* Rodapé */}
             <View style={styles.footer}>
               <Text style={styles.footerText}>Não tem conta? </Text>
-              <Pressable onPress={handleCadastroWeb}>
+              <Pressable onPress={handleCadastroApp}>
                 <Text style={styles.footerLink}>Cadastre-se</Text>
               </Pressable>
             </View>
@@ -247,41 +239,7 @@ export default function LoginScreen() {
         </KeyboardAvoidingView>
       </SafeAreaView>
 
-      {/* Modal Customizado para Redirecionamento */}
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisivel}
-        onRequestClose={() => setModalVisivel(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalIconContainer}>
-              <Ionicons name="globe-outline" size={32} color="#ff8d8c" />
-            </View>
-            <Text style={styles.modalTitle}>Ir para o site?</Text>
-            <Text style={styles.modalText}>
-              O cadastro de novas contas é feito com segurança pelo nosso site oficial.{'\n\n'}
-              Vamos redirecioná-lo(a) para o portal e, após finalizar, você voltará automaticamente para o app.
-            </Text>
-            
-            <View style={styles.modalButtonsRow}>
-              <Pressable
-                style={[styles.modalButton, styles.modalButtonCancel]}
-                onPress={() => setModalVisivel(false)}
-              >
-                <Text style={styles.modalButtonCancelText}>Agora não</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.modalButton, styles.modalButtonConfirm]}
-                onPress={confirmarRedirecionamento}
-              >
-                <Text style={styles.modalButtonConfirmText}>Continuar</Text>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      </Modal>
+
 
       {/* Modal de Recuperação de Senha */}
       <Modal
