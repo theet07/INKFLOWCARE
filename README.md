@@ -1,148 +1,106 @@
-# InkFlowCare — Mobile
+# 🩹 InkFlowCare — App Mobile
 
-Aplicativo móvel da plataforma **InkFlow**, focado em **cuidados pós-tatuagem**. Permite que clientes acompanhem o processo de cicatrização dia a dia, façam quizzes de progresso, registrem fotos de evolução e ganhem badges por cuidar bem da tatuagem.
+![React Native](https://img.shields.io/badge/React%20Native-0.81.5-61DAFB?style=flat-square&logo=react)
+![Expo](https://img.shields.io/badge/Expo-54-000020?style=flat-square&logo=expo)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat-square&logo=typescript)
+![Android](https://img.shields.io/badge/Android-suportado-3DDC84?style=flat-square&logo=android)
+![iOS](https://img.shields.io/badge/iOS-suportado-000000?style=flat-square&logo=apple)
+
+O **InkFlowCare** é o aplicativo mobile da plataforma InkFlow, dedicado ao **acompanhamento pós-tatuagem** do cliente. Focado em engajamento e saúde, o app guia o usuário por todo o processo de cicatrização — dia a dia — através de checklists, quizzes, registro fotográfico e um sistema de conquistas, resolvendo um problema histórico do setor: a falta de orientação e acompanhamento do cliente após a sessão de tatuagem.
 
 ---
 
-## Tecnologias
+## 🌟 Funcionalidades e Recursos do Sistema
 
-| Tecnologia | Versão |
+### 🩹 Plano de Cicatrização Dia a Dia
+Cada tatuagem cadastrada gera automaticamente um plano de cuidados de **30 dias**. O cliente acompanha o progresso por um mapa visual da jornada, com cada dia desbloqueado progressivamente. O scheduler do backend atualiza o status dos dias automaticamente conforme o tempo avança.
+
+### ✅ Checklist Diário de Cuidados
+Cada dia do plano contém um checklist com os cuidados recomendados para aquela etapa da cicatrização. O cliente marca os itens concluídos e o progresso é sincronizado em tempo real com o backend.
+
+### 🧠 Quiz Diário de Acompanhamento
+Ao final de cada dia, o cliente responde um quiz rápido sobre seus sintomas e a condição da tatuagem. As respostas validam o progresso e liberam o próximo dia da jornada, garantindo que o cliente está seguindo o plano corretamente.
+
+### 📸 Registro Fotográfico de Evolução
+O cliente registra fotos diretamente da galeria ou câmera para documentar visualmente a evolução da cicatrização. O histórico fotográfico por tatuagem permite acompanhar a transformação ao longo dos dias.
+
+### 🏆 Badges e Gamificação
+Conquistas são desbloqueadas conforme o cliente atinge marcos no cuidado com a tatuagem (ex: 7 dias concluídos, plano completo). O sistema de badges incentiva a adesão ao plano e recompensa a disciplina do usuário.
+
+### 🔔 Notificações Push
+Lembretes diários automáticos para que o cliente não esqueça de realizar os cuidados do dia. Configuração gerenciada diretamente no perfil do app com sincronização das preferências no backend.
+
+### 🔐 Autenticação com Verificação OTP
+Login e cadastro com verificação de e-mail via código OTP de uso único. Token JWT persistido no `AsyncStorage` com auto-login ao reabrir o app. Em token expirado (401), o app limpa automaticamente a sessão e redireciona para o login.
+
+### 👤 Perfil e Gestão de Conta
+Visualização e edição dos dados cadastrais, foto de perfil, histórico de tatuagens cadastradas, estatísticas de progresso e alteração de senha diretamente pelo app.
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+| Camada | Tecnologia |
 |---|---|
-| React Native | 0.81.5 |
-| Expo | ~54.0.33 |
-| Expo Router | ~6.0.23 |
-| TypeScript | ~5.9.2 |
-| React | 19.1.0 |
-| Axios | 1.16.0 |
-| AsyncStorage | 2.2.0 |
-| Expo Notifications | ~0.32.17 |
-| Expo Image Picker | ~17.0.11 |
-| Expo Linear Gradient | ~15.0.8 |
-| React Native Reanimated | ~4.1.1 |
-| React Navigation (Bottom Tabs) | 7.4.0 |
+| Framework | React Native 0.81.5 |
+| Plataforma | Expo ~54.0.33 |
+| Navegação | Expo Router ~6.0.23 + React Navigation Bottom Tabs 7.4 |
+| Linguagem | TypeScript ~5.9 |
+| HTTP | Axios 1.16 |
+| Persistência | AsyncStorage 2.2 |
+| Notificações | Expo Notifications ~0.32 |
+| Upload de Fotos | Expo Image Picker ~17.0 |
+| Animações | React Native Reanimated ~4.1 |
+| Gradientes | Expo Linear Gradient ~15.0 |
+| Build/Deploy | EAS Build |
 
 ---
 
-## Estrutura do Projeto
+## 🏗️ Arquitetura do Sistema
 
 ```
 app/
 ├── (tabs)/
-│   ├── _layout.tsx         # Configuração das tabs
 │   ├── index.tsx           # Home — visão geral das tatuagens
-│   ├── caminho.tsx         # Caminho de cicatrização (jornada)
-│   ├── explore.tsx         # Explorar dicas e conteúdo
+│   ├── caminho.tsx         # Jornada de cicatrização
+│   ├── explore.tsx         # Dicas e conteúdo
 │   └── perfil.tsx          # Perfil do usuário
-├── dia/
-│   └── [numero].tsx        # Detalhe do dia de cicatrização
-├── quiz/
-│   └── [diaId].tsx         # Quiz diário do dia
-├── index.tsx               # Splash / animação de entrada
+├── dia/[numero].tsx        # Detalhe do dia de cicatrização
+├── quiz/[diaId].tsx        # Quiz diário
 ├── login.tsx               # Tela de login
 ├── cadastro.tsx            # Tela de cadastro
-├── verificacao.tsx         # Verificação de e-mail (OTP)
+├── verificacao.tsx         # Verificação OTP
 ├── nova-tatuagem.tsx       # Registrar nova tatuagem
-├── alterar-senha.tsx       # Alterar senha
-├── ajuda.tsx               # Central de ajuda
-├── privacidade.tsx         # Política de privacidade
-└── _layout.tsx             # Layout raiz (providers globais)
+└── alterar-senha.tsx       # Alterar senha
 
 context/
-├── auth.tsx                # AuthContext — autenticação JWT
-└── AlertContext.tsx        # Alertas globais na aplicação
+├── auth.tsx                # AuthContext — JWT + AsyncStorage
+└── AlertContext.tsx        # Alertas globais
 
 hooks/
-├── useCicatrizacao.ts      # Lógica do plano de cicatrização
-├── useChecklist.ts         # Checklist diário de cuidados
-├── useBadges.ts            # Sistema de badges/conquistas
-├── useCaminho.ts           # Progresso na jornada
-├── useFotos.ts             # Upload e listagem de fotos de evolução
-├── useQuiz.ts              # Lógica do quiz diário
+├── useCicatrizacao.ts      # Plano de cicatrização
+├── useChecklist.ts         # Checklist diário
+├── useBadges.ts            # Sistema de conquistas
+├── useCaminho.ts           # Progresso da jornada
+├── useFotos.ts             # Fotos de evolução
+├── useQuiz.ts              # Quiz diário
 ├── useEstatisticas.ts      # Estatísticas de progresso
-├── useNotifications.ts     # Configuração de notificações push
-├── use-color-scheme.ts     # Detecção de tema (claro/escuro)
-└── use-theme-color.ts      # Cores baseadas no tema ativo
+└── useNotifications.ts     # Notificações push
 
 services/
-└── api.ts                  # Instância Axios configurada com JWT
-
-constants/
-└── theme.ts                # Paleta de cores e tokens de design
-
-assets/
-└── images/                 # Ícones e imagens do app
+└── api.ts                  # Axios com interceptors JWT automáticos
 ```
 
 ---
 
-## Funcionalidades
-
-### Autenticação
-- Login e cadastro com verificação de e-mail via **OTP**
-- Token JWT persistido no **AsyncStorage** (`@inkflow:token`)
-- Auto-login ao abrir o app se token válido existir
-- Logout limpa token e dados do usuário do storage
-
-### Cicatrização
-- Plano de cuidados **dia a dia** (30 dias) gerado a partir da data da tatuagem
-- Checklist diário de cuidados a serem marcados
-- Quiz diário para verificar o progresso e liberar o próximo dia
-- Visualização do status de cada dia (pendente, em andamento, concluído)
-
-### Fotos de Evolução
-- Upload de fotos diretamente da galeria ou câmera via `expo-image-picker`
-- Histórico fotográfico por tatuagem
-- Comparação visual do progresso
-
-### Badges e Gamificação
-- Conquistas desbloqueadas ao completar marcos (ex: 7 dias, 30 dias)
-- Listagem de badges obtidos no perfil
-
-### Notificações Push
-- Lembretes diários para realizar os cuidados
-- Configuração gerenciada pelo `useNotifications` com `expo-notifications`
-
-### Perfil
-- Visualização e edição dos dados da conta
-- Histórico de tatuagens cadastradas
-- Estatísticas de progresso (`useEstatisticas`)
-
----
-
-## Autenticação — Fluxo Técnico
-
-`context/auth.tsx` expõe o `AuthProvider` e o hook `useAuth`:
-
-```ts
-const { logado, user, loading, login, logout, authenticate } = useAuth();
-```
-
-- `login(email, senha)` — faz POST em `/auth/login`, salva token e user no AsyncStorage
-- `logout()` — remove token e user, reseta estado
-- `authenticate(token, userData)` — usado no cadastro para logar direto após verificação OTP
-- Interceptor no Axios injeta `Authorization: Bearer <token>` automaticamente
-- Em erro 401, o interceptor limpa o storage (token expirado)
-
----
-
-## API
-
-Toda comunicação com o backend é feita via `services/api.ts`:
-
-```ts
-baseURL: 'https://inkflowbackend-4w1g.onrender.com/api'
-timeout: 15000ms
-```
-
-Endpoints utilizados:
+## 📡 Endpoints Consumidos
 
 | Recurso | Método | Rota |
 |---|---|---|
 | Login | POST | `/auth/login` |
 | Cadastro | POST | `/clientes` |
-| Solicitar OTP | POST | `/clientes/solicitar-codigo` |
-| Verificar OTP | POST | `/clientes/verificar-codigo` |
-| Minha conta | GET | `/clientes/minha-conta` |
+| Verificação OTP | POST | `/clientes/verificar-codigo` |
+| Minha Conta | GET | `/clientes/minha-conta` |
 | Cicatrizações | GET/POST | `/cicatrizacao` |
 | Checklist | GET/PATCH | `/cicatrizacao/:id/checklist` |
 | Quiz | GET/POST | `/quiz/:diaId` |
@@ -154,14 +112,41 @@ Endpoints utilizados:
 
 ---
 
-## Configuração do App
+## ▶️ Como Executar
 
-Definida em `app.json`:
+### Pré-requisitos
+
+- Node.js 18+
+- Expo CLI: `npm install -g expo-cli`
+- App **Expo Go** no celular ou emulador configurado
+
+### Localmente
+
+```bash
+git clone <url-do-repo>
+cd INKFLOWCARE
+npm install
+npx expo start
+```
+
+Escaneie o QR Code com o Expo Go ou pressione `a` para Android / `i` para iOS.
+
+### Build para Produção (EAS)
+
+```bash
+npm install -g eas-cli
+eas login
+eas build --platform android
+eas build --platform ios
+```
+
+---
+
+## ⚙️ Configuração do App
 
 | Propriedade | Valor |
 |---|---|
 | Nome | InkFlowCare |
-| Slug | INKAPP |
 | Package Android | `com.theets07.INKAPP` |
 | Orientação | Portrait |
 | Tema | Automático (claro/escuro) |
@@ -170,71 +155,14 @@ Definida em `app.json`:
 
 ---
 
-## Como Executar
+## 👤 Autores
 
-### Pré-requisitos
-
-- Node.js 18+
-- Expo CLI: `npm install -g expo-cli`
-- App **Expo Go** no celular ou emulador Android/iOS configurado
-
-### Passos
-
-```bash
-# Clonar o repositório
-git clone <url-do-repo>
-cd INKFLOWCARE
-
-# Instalar dependências
-npm install
-
-# Iniciar o projeto
-npx expo start
-```
-
-Escaneie o QR Code com o Expo Go ou pressione `a` para Android / `i` para iOS.
-
-### Plataformas
-
-```bash
-npx expo start --android
-npx expo start --ios
-npx expo start --web
-```
+**Matheus** & **Nathan**
 
 ---
 
-## Build para Produção (EAS Build)
+## 📄 Licença
 
-```bash
-# Instalar EAS CLI
-npm install -g eas-cli
+Copyright © 2025 InkFlow. Todos os direitos reservados.
 
-# Login na conta Expo
-eas login
-
-# Build para Android
-eas build --platform android
-
-# Build para iOS
-eas build --platform ios
-```
-
-Configuração em `eas.json`.
-
----
-
-## Tema e Design
-
-O `constants/theme.ts` centraliza a paleta de cores do app:
-
-- Background principal: `#0e0e0e` (dark)
-- Splash screen com fundo `#0e0e0e` e logo branca
-
-O app suporta tema claro e escuro automaticamente via `use-color-scheme.ts`.
-
----
-
-## Licença
-
-Distribuído sob a licença presente no arquivo [LICENSE](./LICENSE).
+Este software e seu código-fonte são propriedade exclusiva dos autores. É proibida a reprodução, distribuição, modificação ou uso comercial, total ou parcial, sem autorização expressa por escrito dos autores.
