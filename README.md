@@ -157,7 +157,7 @@ eas build --platform ios
 
 ## 👤 Autores
 
-**Matheus** & **Nathan**
+**Matheus**
 
 ---
 
